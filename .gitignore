@@ -1,0 +1,5 @@
+# OS System Files #
+###################
+.DS_Store
+.idea/**
+atlassian-ide-plugin.xml
