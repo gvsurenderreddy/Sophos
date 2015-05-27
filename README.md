@@ -1,2 +1,2 @@
 # Sophos
-The Sophos project
+The Sophos project ReadME file.
