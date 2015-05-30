@@ -9,10 +9,14 @@ Ext.define('SAT.Application', {
     name: 'SAT',
 
     stores: [
-        // TODO: add global / shared stores here
+        'main.MainStore'
+    ],
+
+    models: [
+
     ],
     
     launch: function () {
-        // TODO - Launch the application
+
     }
 });

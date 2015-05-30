@@ -1,0 +1,37 @@
+.sat-main-view {
+
+      .main-text-area {
+        .x-form-text-default.x-form-textarea {
+          font-weight: 400;
+          font-family: Flama-Basic;
+        }
+      }
+
+      .threat-level {
+        color: #38a8ff;
+        font-size: 9px;
+        text-align: left;
+      }
+      .start-button {
+        .x-btn-inner {
+          font-size: 14px;
+          font-weight: 600;
+        }
+      }
+
+      .x-form-checkbox-default {
+        background: url(images/form/checkbox.png) no-repeat;
+        width: 15px;
+        height: 15px;
+      }
+      .x-form-cb-checked .x-field-default-form-checkbox-focus {
+          background: url("images/check-on.png");
+          width: 20px;
+          height: 18px;
+      }
+     .main-panel .x-autocontainer-outerCt {
+         background: #fbfbfb;
+         font-family: Flama-Basic;
+         border: #dddddd;
+     }
+}
