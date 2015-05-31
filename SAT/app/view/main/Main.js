@@ -13,7 +13,8 @@ Ext.define('SAT.view.main.Main', {
         'SAT.store.main.MainStore',
         'Ext.chart.series.Pie',
         'Ext.chart.PolarChart',
-        'Ext.chart.interactions.Rotate'
+        'Ext.chart.interactions.Rotate',
+        'Ext.chart.interactions.ItemHighlight'
     ],
 
     xtype: 'app-main',
@@ -34,8 +35,8 @@ Ext.define('SAT.view.main.Main', {
         xtype: 'panel',
         cls: 'top-panel',
         header: false,
-        x: 10,
-        y: 25,
+        x: 20,
+        y: 12,
         width: 880,
         title: '&nbsp;',
         items: [{
@@ -46,7 +47,7 @@ Ext.define('SAT.view.main.Main', {
         {
             xtype: 'fieldcontainer',
             layout: 'hbox',
-            margin: '25 0 0 0',
+            margin: '10 0 0 0',
             cls: 'question-mark',
             items: [{
                 xtype: 'component',
@@ -61,12 +62,17 @@ Ext.define('SAT.view.main.Main', {
                     padding: '20px 0',
                     color: '#38a8ff',
                     'font-size': '48px',
-                    'background-color': 'lightGrey',
-                    'margin-bottom': '8px'
+                    'background-color': '#f1f1f1',
+                    'margin-bottom': '8px',
+                    'border-radius': '5px'
                 }
             },{
                 xtype: 'label',
                 margin: '0 0 0 8',
+                style: {
+                    'font-family': 'Flama-Basic',
+                    'font-weight': '400px'
+                },
                 width: 780,
                 height: 80,
                 text: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.'
@@ -109,20 +115,28 @@ Ext.define('SAT.view.main.Main', {
             width: 280,
             autoEl: {
                 html: 'Feel free to customize your audit.'
+            },
+            style: {
+                'font-weight': 500
             }
         },
         {
             xtype: 'panel',
             width: 880,
-            //height: 750,
             margin: '20 0 0 0',
             layout: 'vbox',
-            border: true,
+            style: {
+                'border': '1px solid #dddddd',
+                'border-radius': '5px'
+            },
             cls: 'main-panel',
             items: [
                 {
                     xtype: 'panel',
-                    border: true,
+                    style: {
+                        'border-bottom': '1px solid #dddddd',
+                        'left': '-3px'
+                    },
                     items: [{
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
@@ -146,7 +160,9 @@ Ext.define('SAT.view.main.Main', {
                 },
                 {
                     xtype: 'panel',
-                    border: true,
+                    style: {
+                        'border-bottom': '1px solid #dddddd'
+                    },
                     items: [{
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
@@ -193,8 +209,6 @@ Ext.define('SAT.view.main.Main', {
                             xtype: 'panel',
                             width: 85,
                             margin: '0 0 0 5',
-                            //height: 120,
-                            //style: 'border: 1px solid silver;',
                             layout:{
                                 type: 'vbox'
                             },
@@ -256,7 +270,9 @@ Ext.define('SAT.view.main.Main', {
                 },
                 {
                     xtype: 'panel',
-                    border: true,
+                    style: {
+                        'border-bottom': '1px solid #dddddd'
+                    },
                     items: [{
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
@@ -366,7 +382,9 @@ Ext.define('SAT.view.main.Main', {
                 },
                 {
                     xtype: 'panel',
-                    border: true,
+                    style: {
+                        'border-bottom': '1px solid #dddddd'
+                    },
                     items: [{
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
@@ -476,7 +494,9 @@ Ext.define('SAT.view.main.Main', {
                 },
                 {
                     xtype: 'panel',
-                    border: true,
+                    style: {
+                        'border-bottom': '1px solid #dddddd'
+                    },
                     items: [{
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
@@ -586,7 +606,9 @@ Ext.define('SAT.view.main.Main', {
                 },
                 {
                     xtype: 'panel',
-                    border: true,
+                    style: {
+                        'border-bottom': '1px solid #dddddd'
+                    },
                     items: [{
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
@@ -633,8 +655,6 @@ Ext.define('SAT.view.main.Main', {
                             xtype: 'panel',
                             width: 85,
                             margin: '0 0 0 5',
-                            //height: 120,
-                            //style: 'border: 1px solid silver;',
                             layout:{
                                 type: 'vbox'
                             },
@@ -697,6 +717,20 @@ Ext.define('SAT.view.main.Main', {
             ],
             store: 'main.MainStore'
 
+        },{
+            xtype: 'button',
+            text: 'Start Audit',
+            margin: '20 0 0 0',
+            cls: 'start-button',
+            style: {
+                background: '#007ac6',
+                'border-radius': '5px',
+                width: '150px',
+                color: '#fff',
+                float: 'right',
+                padding: '10px 20px',
+                'text-decoration': 'none'
+            }
         }]
 
     }]
