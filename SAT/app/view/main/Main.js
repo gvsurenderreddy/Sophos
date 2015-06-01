@@ -58,11 +58,12 @@ Ext.define('SAT.view.main.Main', {
                 },
                 style: {
                     width: '80px',
-                    height: '70px',
+                    height: '75px',
                     'text-align': 'center',
-                    padding: '18px 0',
+                    padding: '30px 0',
                     color: '#38a8ff',
-                    'font-size': '48px',
+                    'font-size': '50px',
+                    'font-weight': '400',
                     'background-color': '#f1f1f1',
                     'border-radius': '5px',
                     'margin-bottom': '10px'
