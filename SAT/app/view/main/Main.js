@@ -53,18 +53,19 @@ Ext.define('SAT.view.main.Main', {
                 xtype: 'component',
                 width: 80,
                 autoEl: {
+                    tag: 'div',
                     html: '?'
                 },
                 style: {
-                    width: '70px',
-                    height: '80px',
+                    width: '80px',
+                    height: '70px',
                     'text-align': 'center',
-                    padding: '20px 0',
+                    padding: '18px 0',
                     color: '#38a8ff',
                     'font-size': '48px',
                     'background-color': '#f1f1f1',
-                    'margin-bottom': '8px',
-                    'border-radius': '5px'
+                    'border-radius': '5px',
+                    'margin-bottom': '10px'
                 }
             },{
                 xtype: 'label',
@@ -105,8 +106,11 @@ Ext.define('SAT.view.main.Main', {
                     'font-size': '28px',
                     float: 'right',
                     padding: '10px 20px',
-                    'text-decoration': 'none'
-                }
+                    'text-decoration': 'none',
+                    'box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)',
+                    '-webkit-box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)',
+                    '-moz-box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)'
+}
             }]
 
         },
