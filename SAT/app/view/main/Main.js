@@ -139,7 +139,7 @@ Ext.define('SAT.view.main.Main', {
                     xtype: 'panel',
                     style: {
                         'border-bottom': '1px solid #dddddd',
-                        'left': '-3px'
+                        'padding-bottom': '10px'
                     },
                     items: [{
                         xtype: 'fieldcontainer',
@@ -165,7 +165,8 @@ Ext.define('SAT.view.main.Main', {
                 {
                     xtype: 'panel',
                     style: {
-                        'border-bottom': '1px solid #dddddd'
+                        'border-bottom': '1px solid #dddddd',
+                        'padding-bottom': '10px'
                     },
                     items: [{
                         xtype: 'fieldcontainer',
@@ -195,7 +196,7 @@ Ext.define('SAT.view.main.Main', {
                                 }
                             },{
                                 xtype: 'component',
-                                margin: '3 0 0 0',
+                                margin: '5 0 0 0',
                                 autoEl: {
                                     tag: 'div',
                                     html: 'Current Examples: porn.com, iliketurtles.com, stinkyfeet.com, westboro baptist church'
@@ -275,7 +276,8 @@ Ext.define('SAT.view.main.Main', {
                 {
                     xtype: 'panel',
                     style: {
-                        'border-bottom': '1px solid #dddddd'
+                        'border-bottom': '1px solid #dddddd',
+                        'padding-bottom': '10px'
                     },
                     items: [{
                         xtype: 'fieldcontainer',
@@ -305,7 +307,7 @@ Ext.define('SAT.view.main.Main', {
                                 }
                             },{
                                 xtype: 'component',
-                                margin: '3 0 0 0',
+                                margin: '5 0 0 0',
                                 autoEl: {
                                     tag: 'div',
                                     html: 'Current Examples: porn.com, iliketurtles.com, stinkyfeet.com, westboro baptist church'
@@ -385,7 +387,8 @@ Ext.define('SAT.view.main.Main', {
                 {
                     xtype: 'panel',
                     style: {
-                        'border-bottom': '1px solid #dddddd'
+                        'border-bottom': '1px solid #dddddd',
+                        'padding-bottom': '10px'
                     },
                     items: [{
                         xtype: 'fieldcontainer',
@@ -415,7 +418,7 @@ Ext.define('SAT.view.main.Main', {
                                 }
                             },{
                                 xtype: 'component',
-                                margin: '3 0 0 0',
+                                margin: '5 0 0 0',
                                 autoEl: {
                                     tag: 'div',
                                     html: 'Current Examples: porn.com, iliketurtles.com, stinkyfeet.com, westboro baptist church'
@@ -495,7 +498,8 @@ Ext.define('SAT.view.main.Main', {
                 {
                     xtype: 'panel',
                     style: {
-                        'border-bottom': '1px solid #dddddd'
+                        'border-bottom': '1px solid #dddddd',
+                        'padding-bottom': '10px'
                     },
                     items: [{
                         xtype: 'fieldcontainer',
@@ -525,7 +529,7 @@ Ext.define('SAT.view.main.Main', {
                                 }
                             },{
                                 xtype: 'component',
-                                margin: '3 0 0 0',
+                                margin: '5 0 0 0',
                                 autoEl: {
                                     tag: 'div',
                                     html: 'Current Examples: porn.com, iliketurtles.com, stinkyfeet.com, westboro baptist church'
@@ -605,7 +609,8 @@ Ext.define('SAT.view.main.Main', {
                 {
                     xtype: 'panel',
                     style: {
-                        'border-bottom': '1px solid #dddddd'
+                        'border-bottom': '1px solid #dddddd',
+                        'padding-bottom': '10px'
                     },
                     items: [{
                         xtype: 'fieldcontainer',
@@ -635,7 +640,7 @@ Ext.define('SAT.view.main.Main', {
                                 }
                             },{
                                 xtype: 'component',
-                                margin: '3 0 0 0',
+                                margin: '5 0 0 0',
                                 autoEl: {
                                     tag: 'div',
                                     html: 'Current Examples: porn.com, iliketasdadaadjalskdalkdalsdhaldurtles.com, stinkyfeet.com, westboro baptist church'
@@ -727,7 +732,10 @@ Ext.define('SAT.view.main.Main', {
                 color: '#fff',
                 float: 'right',
                 padding: '10px 20px',
-                'text-decoration': 'none'
+                'text-decoration': 'none',
+                'box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)',
+                '-webkit-box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)',
+                '-moz-box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)'
             }
         }]
 
