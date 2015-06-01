@@ -41,7 +41,7 @@ Ext.define('SAT.view.main.Main', {
         title: '&nbsp;',
         items: [{
             xtype: 'image',
-            src: '/SAT/resources/images/logo2.png',
+            src: 'resources/images/logo2.png',
             autoEl: 'div'
         },
         {
@@ -152,7 +152,7 @@ Ext.define('SAT.view.main.Main', {
                             margin: '25 0 0 20'
                         },{
                             xtype: 'image',
-                            src: '/SAT/resources/images/graphic-network.png',
+                            src: 'resources/images/graphic-network.png',
                             autoEl: 'div',
                             width: '12%'
                         },{
@@ -178,7 +178,7 @@ Ext.define('SAT.view.main.Main', {
                             margin: '25 0 0 20'
                         },{
                             xtype: 'image',
-                            src: '/SAT/resources/images/graphic-offensive.png',
+                            src: 'resources/images/graphic-offensive.png',
                             autoEl: 'div',
                             width: '12%'
                         },{
@@ -288,7 +288,7 @@ Ext.define('SAT.view.main.Main', {
                             margin: '25 0 0 20'
                         },{
                             xtype: 'image',
-                            src: '/SAT/resources/images/graphic-malware.png',
+                            src: 'resources/images/graphic-malware.png',
                             autoEl: 'div',
                             width: '12%'
                         },{
@@ -398,7 +398,7 @@ Ext.define('SAT.view.main.Main', {
                             margin: '25 0 0 20'
                         },{
                             xtype: 'image',
-                            src: '/SAT/resources/images/graphic-adware.png',
+                            src: 'resources/images/graphic-adware.png',
                             autoEl: 'div',
                             width: '12%'
                         },{
@@ -508,7 +508,7 @@ Ext.define('SAT.view.main.Main', {
                             margin: '25 0 0 20'
                         },{
                             xtype: 'image',
-                            src: '/SAT/resources/images/graphic-phishing.png',
+                            src: 'resources/images/graphic-phishing.png',
                             autoEl: 'div',
                             width: '12%'
                         },{
@@ -618,7 +618,7 @@ Ext.define('SAT.view.main.Main', {
                             margin: '25 0 0 20'
                         },{
                             xtype: 'image',
-                            src: '/SAT/resources/images/graphic-filter.png',
+                            src: 'resources/images/graphic-filter.png',
                             autoEl: 'div',
                             width: '12%'
                         },{
