@@ -7,8 +7,9 @@ Ext.application({
     name: 'SAT',
 
     extend: 'SAT.Application',
-    
+
     autoCreateViewport: 'SAT.view.main.Main'
+    //autoCreateViewport: 'SAT.view.auditprogress.auditprogressmain.AuditProgressMain'
 	
     //-------------------------------------------------------------------------
     // Most customizations should be made to SAT.Application. If you need to

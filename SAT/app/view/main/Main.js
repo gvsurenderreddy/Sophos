@@ -14,7 +14,8 @@ Ext.define('SAT.view.main.Main', {
         'Ext.chart.series.Pie',
         'Ext.chart.PolarChart',
         'Ext.chart.interactions.Rotate',
-        'Ext.chart.interactions.ItemHighlight'
+        'Ext.chart.interactions.ItemHighlight',
+        'SAT.view.auditprogress.auditprogressmain.AuditProgressMain'
     ],
 
     xtype: 'app-main',
@@ -96,9 +97,7 @@ Ext.define('SAT.view.main.Main', {
                 xtype: 'button',
                 text: 'Start Full Audit',
                 cls: 'start-button',
-                handler: function() {
-                    alert('You clicked the button!');
-                },
+                handler: "launchProgressWindow",
                 style: {
                     background: '#007ac6',
                     'border-radius': '5px',
@@ -726,6 +725,7 @@ Ext.define('SAT.view.main.Main', {
             text: 'Start Audit',
             margin: '20 0 0 0',
             cls: 'start-button',
+            handler: "launchProgressWindow",
             style: {
                 background: '#007ac6',
                 'border-radius': '5px',

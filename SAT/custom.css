@@ -1,0 +1,119 @@
+.progress-main{
+    color: #0171B9;
+    border: 1px solid silver;
+    border-radius: 4px;
+    box-shadow: 0px 0px 2px 3px #F0EFEF;
+}
+
+.progress-main .progress-header{
+    color: #6EB857;
+    font-size: 22px;
+}
+
+.progress-main .header-time-msg{
+    font-size: 12px;
+    color: #0171B9;
+}
+
+.icon-clock {
+    background-image: url("resources/images/clock-white.png");
+    background-size: 16px 16px;
+    height: 16px;
+    width: 16px;
+    display: inline-block;
+    background-color: #008000;
+    margin-right: 5px;
+}
+/*--- chart title*/
+.internet-chart-title{
+    font-size: 20px;
+    font-weight: bold;
+    color: #0171B9;
+}
+/* - chart right 3 boxes...*/
+.progress-main .internet-stats .x-panel-header-title-default{
+    font-size: 12px;
+    font-weight: bold;
+    color: #0171B9;
+}
+
+.progress-main .internet-stats .x-panel-header-default-horizontal.x-header-noborder{
+    padding-left: 0px;
+    padding-bottom: 0px;
+}
+.progress-main .internet-stats .x-autocontainer-innerCt{
+    text-align: center;
+    vertical-align: middle;
+    font-size: 25px;
+    color: #808080;
+}
+.progress-main .internet-stats .x-panel-body-default{
+    border: 1px solid silver !important;
+    padding: 2px;
+}
+
+.progress-main .internet-stats .x-autocontainer-outerCt {
+    background-color: #E3ECF3;
+}
+
+.progress-main .internet-stats .internet-stats-units{
+    font-size: 15px;
+}
+
+.progress-main .x-panel-header-default{
+    background-color: transparent;
+}
+/*----------------------------------------- */
+.progress-main .x-tab {
+    margin-bottom: -10px;
+    padding: 12px;
+}
+
+.progress-main .x-tab.x-tab-default {
+    /*background-color: #EBEBEB;*/
+    border: 1px solid #DBDBDB;
+
+    background: #fafafa; /* Old browsers */
+    background: -moz-linear-gradient(top,  #fafafa 0%, #eeeeee 50%, #e8e8e8 100%, #fafafa 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fafafa), color-stop(50%,#eeeeee), color-stop(100%,#e8e8e8), color-stop(100%,#fafafa)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #fafafa 0%,#eeeeee 50%,#e8e8e8 100%,#fafafa 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #fafafa 0%,#eeeeee 50%,#e8e8e8 100%,#fafafa 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #fafafa 0%,#eeeeee 50%,#e8e8e8 100%,#fafafa 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #fafafa 0%,#eeeeee 50%,#e8e8e8 100%,#fafafa 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#fafafa',GradientType=0 ); /* IE6-9 */
+}
+
+.progress-main .x-tab.x-tab-active.x-tab-default {
+    background: #ffffff;
+    background-color: white;
+    border: 1px solid #adadad;
+    border-right-color: white;
+    box-shadow: 0px 1px 10px 3px #ccc;
+}
+
+.progress-main .x-tab.x-tab-default .x-tab-inner-default{
+    font-size: 13px;
+    font-weight: bold;
+    color: #0171B9;
+}
+
+.progress-main .x-tab.x-tab-active.x-tab-default .x-tab-inner-default{
+    color: #0171B9;
+}
+
+
+.progress-main .x-tab-bar-default-left > .x-tab-bar-body-default {
+    padding: 6px 0px 6px 0px;
+}
+
+
+.progress-main .x-tab-bar-default{
+    /*background-color: transparent;*/
+    left: -1px !important;
+    top: -12px !important;
+}
+/*----------------------------------------- */
+
+div.x-mask {
+    background-color: rgba(66, 66, 66, 0.7);;
+}
