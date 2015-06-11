@@ -3,7 +3,8 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
     alias: 'controller.auditprogress-internettest-internettest',
     drawChart: function(cmp, opt, mode){
         var me = this,
-            testMode = mode || "download";
+            testMode = mode || "download",
+            title = (testMode == "download" ? "Download Test" : "Upload Test");
                 $('#chartcontainer').highcharts({
 
                     chart: {
@@ -15,7 +16,7 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                     },
 
                     title: {
-                        text: 'Internet Connection Test - ' + testMode
+                        text: 'Internet Connection - ' + title,
                     },
                     mode: testMode,
                     pane: {
@@ -100,7 +101,7 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                 },
                     // Add some life
                     function (chart) {
-                    return;
+                    //return;
                         if (!chart.renderer.forExport) {
                             var setIntervalHandle = setInterval(function () {
                                 var point = chart.series[0].points[0],
