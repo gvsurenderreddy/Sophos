@@ -6,7 +6,7 @@
  * TODO - Replace this content of this view to suite the needs of your application.
  */
 Ext.define('SAT.view.main.Main', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.container.Viewport',
     requires: [
         'SAT.view.main.MainController',
         'SAT.view.main.MainModel',
@@ -17,7 +17,6 @@ Ext.define('SAT.view.main.Main', {
         'Ext.chart.interactions.ItemHighlight',
         'SAT.view.auditprogress.auditprogressmain.AuditProgressMain'
     ],
-
     xtype: 'app-main',
     scrollable: true,
     cls: 'sat-main-view',
@@ -36,6 +35,7 @@ Ext.define('SAT.view.main.Main', {
         xtype: 'panel',
         cls: 'top-panel',
         header: false,
+        margin: '0 0 20 0',
         x: 20,
         y: 12,
         width: 880,
