@@ -1,3 +1,12 @@
+div#siteloading {
+    position: absolute;
+    left: 40%;
+    top: 40%;
+    vertical-align: top;
+}
+
+
+
 .progress-main{
     color: #0171B9;
     border: 1px solid silver;

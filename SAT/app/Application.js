@@ -18,5 +18,10 @@ Ext.define('SAT.Application', {
     
     launch: function () {
 
+    },
+    onBeforeLaunch: function() {
+        //remove site loading animation
+        $('#siteloading').hide();
+        this.callParent(arguments);
     }
 });

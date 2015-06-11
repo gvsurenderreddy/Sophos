@@ -34,23 +34,23 @@ Ext.define("SAT.view.auditprogress.audittabpanel.AuditTabPanel",{
         },
         {
             title: "Offensive Content",
-            html : "....Offensive Content"
+            html : "....Offensive Content...under construction"
         },
         {
             title: "Malware",
-            html : "....Malware Content"
+            html : "....Malware Content...under construction"
         },
         {
             title: "Adware/Spyware",
-            html : "....Adware/Spyware"
+            html : "....Adware/Spyware...under construction"
         },
         {
             title: "Phishing",
-            html : "....Phishing Content"
+            html : "....Phishing Content...under construction"
         },
         {
             title: "Filtering Avoidance",
-            html : "....Filtering Avoidance Content"
+            html : "....Filtering Avoidance Content...under construction"
         }
     ]
 });

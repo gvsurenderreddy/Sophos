@@ -10,13 +10,13 @@ Ext.define('SAT.view.main.MainController', {
             //generate config for overlay window
             var launchViewRef = this.getView(),
                 winConfig = {
-                    height: 425,
-                    width: 770,
+                    height: 550,
+                    width: 1050,
                     maxHeight: $(window).height() - 10,
                     maxWidth: $(window).width() - 10,
                     layout: 'fit',
                     modal: true,
-                    title: "Audit Progress",
+                    title: "Audit",
                     autoDestroy: true,
                     items: {
                         xtype: "auditprogressmain",

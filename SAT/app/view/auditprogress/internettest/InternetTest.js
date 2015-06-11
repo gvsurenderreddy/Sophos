@@ -32,7 +32,7 @@ Ext.define("SAT.view.auditprogress.internettest.InternetTest",{
         });
 
         me.items = [
-            {
+/*            {
                 xtype: 'polar',
                 flex: 3,
                 animate: true,
@@ -59,6 +59,14 @@ Ext.define("SAT.view.auditprogress.internettest.InternetTest",{
                     donut: 75,
                     needle: true
                 }
+            },*/
+            {
+                xtype: "container",
+                id: "chartcontainer",
+                flex: 3,
+                listeners: {
+                    afterrender: "drawChart"
+                }
             },
             {
                 xtype: "panel",
@@ -82,12 +90,14 @@ Ext.define("SAT.view.auditprogress.internettest.InternetTest",{
                     {
                         xtype: "panel",
                         cls: "internet-stats",
+                        reference: "pnlDownloadStats",
                         title: "Download Speed",
                         html: "45.2 <span class='internet-stats-units'>Mbps</span>"
                     },
                     {
                         xtype: "panel",
                         cls: "internet-stats",
+                        reference: "pnlUploadStats",
                         title: "Upload Speed",
                         html: "15.9 <span class='internet-stats-units'>Mbps</span>"
                     }
