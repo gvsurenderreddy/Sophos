@@ -19,6 +19,7 @@ Ext.define('SAT.view.main.Main', {
     ],
     xtype: 'app-main',
     scrollable: true,
+
     cls: 'sat-main-view',
     controller: 'main',
     viewModel: {
@@ -40,10 +41,12 @@ Ext.define('SAT.view.main.Main', {
         y: 12,
         width: 880,
         title: '&nbsp;',
-        items: [{
+        items: [
+        {
             xtype: 'image',
             src: 'resources/images/logo2.png',
-            autoEl: 'div'
+            autoEl: 'div',
+            height: 60
         },
         {
             xtype: 'fieldcontainer',
