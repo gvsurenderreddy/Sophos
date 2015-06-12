@@ -3,8 +3,8 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
     alias: 'controller.auditprogress-internettest-internettest',
     drawChart: function(cmp, opt, mode){
         var me = this,
-            testMode = mode || "download",
-            title = (testMode == "download" ? "Download Test" : "Upload Test");
+            testMode = mode || "download";
+
                 $('#chartcontainer').highcharts({
 
                     chart: {
@@ -16,7 +16,7 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                     },
 
                     title: {
-                        text: 'Internet Connection - ' + title,
+                        text: 'Internet Connection',
                     },
                     mode: testMode,
                     pane: {
@@ -101,7 +101,12 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                 },
                     // Add some life
                     function (chart) {
-                    //return;
+                        var refreshMillisec = 200,
+                            maxRefreshCount = 50,
+                            count = 0,
+                            testMode = "download",
+                            title = "Internet Connection - Download Test";;
+
                         if (!chart.renderer.forExport) {
                             var setIntervalHandle = setInterval(function () {
                                 var point = chart.series[0].points[0],
@@ -112,21 +117,26 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                                 if (newVal < 0 || newVal > 100) {
                                     newVal = point.y - inc;
                                 }
-
                                 point.update(newVal);
-                                //update Ext components
-                                me.updateStats(newVal, testMode);
-                            }, 200);
 
-                            //kill set interval
-                            setTimeout(function(){
+                                //switch to "Upload" mode
+                                if(count == maxRefreshCount/2){
+                                    testMode = "upload";
+                                    title = "Internet Connection - Upload Test";
+                                     point.update(10);
+                                }
+                                chart.setTitle({text: title});
+
+                                //update Ext components on Right
+                                me.updateStats(newVal, testMode);
+                                count++;
+                            }, refreshMillisec);
+
+                            //kill set interval and stop refresh
+                           setTimeout(function(){
                                 clearInterval(setIntervalHandle);
                                 setIntervalHandle = 0;
-                                //launchUpload Test
-                                if(chart.options.mode == "download"){
-                                    me.drawChart(null, null, "upload");
-                                }
-                            }, 5000);
+                            }, refreshMillisec * maxRefreshCount);
                         }
                     });
     },
