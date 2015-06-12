@@ -192,7 +192,7 @@ Ext.define('SAT.view.main.Main', {
                                 xtype: 'component',
                                 autoEl: {
                                     tag: 'div',
-                                    html:'<b>Adware/Spyware</b><br/> Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam remsdfdsfs aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.'
+                                    html:'<b>Offensive Content</b><br/> Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam remsdfdsfs aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.'
                                 },
                                 style: {
                                     width: '600px'
