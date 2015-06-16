@@ -7,6 +7,21 @@ Ext.define('SAT.view.main.MainController', {
     alias: 'controller.main',
 
     launchProgressWindow: function(){
+            //check if atleast 1 audit is chosen
+            var chkBoxes = Ext.ComponentQuery.query("checkbox[name='chkAudit']"),
+                isChecked = false;
+               $.each(chkBoxes, function(index, chkBox){
+                    isChecked = chkBox.getValue();
+                    if(isChecked){
+                       return false;
+                    }
+                });
+            //EXIT, if none chosen
+            if(!isChecked){
+                this.launchWarnMsgBox("Audit Selection", "Please select atleast one audit and try again.");
+                return false;
+            }
+
             //generate config for overlay window
             var launchViewRef = this.getView(),
                 winConfig = {
@@ -26,5 +41,13 @@ Ext.define('SAT.view.main.MainController', {
             };
 
             this["auditprogressmain"] = Ext.create('Ext.window.Window', winConfig).show();
+    },
+    launchWarnMsgBox: function(msgTitle, msg){
+        Ext.Msg.show({
+            title: msgTitle,
+            message: msg,
+            icon: Ext.Msg.WARNING,
+            buttons: Ext.Msg.OK
+        });
     }
 });

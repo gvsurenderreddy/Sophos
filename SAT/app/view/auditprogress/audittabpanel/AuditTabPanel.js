@@ -29,27 +29,33 @@ Ext.define("SAT.view.auditprogress.audittabpanel.AuditTabPanel",{
     items: [
         {
             title: "Internet Connection Test",
+            action: 'audit-internet',
             //html : "....Internet Content"
             xtype : "internettest"
         },
         {
             title: "Offensive Content",
+            action: 'audit-offensive',
             html : "....Offensive Content...under construction"
         },
         {
             title: "Malware",
+            action: 'audit-malware',
             html : "....Malware Content...under construction"
         },
         {
             title: "Adware/Spyware",
+            action: 'audit-adware',
             html : "....Adware/Spyware...under construction"
         },
         {
             title: "Phishing",
+            action: 'audit-phishing',
             html : "....Phishing Content...under construction"
         },
         {
             title: "Filtering Avoidance",
+            action: 'audit-filter',
             html : "....Filtering Avoidance Content...under construction"
         }
     ]

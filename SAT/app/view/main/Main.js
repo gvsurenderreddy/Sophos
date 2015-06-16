@@ -152,7 +152,9 @@ Ext.define('SAT.view.main.Main', {
                         items: [{
                             xtype: 'checkbox',
                             width: '3%',
-                            margin: '25 0 0 20'
+                            margin: '25 0 0 20',
+                            action: 'audit-internet',
+                            name: 'chkAudit'
                         },{
                             xtype: 'image',
                             src: 'resources/images/graphic-network.png',
@@ -179,7 +181,9 @@ Ext.define('SAT.view.main.Main', {
                         items: [{
                             xtype: 'checkbox',
                             width: '3%',
-                            margin: '25 0 0 20'
+                            margin: '25 0 0 20',
+                            action: 'audit-offensive',
+                            name: 'chkAudit'
                         },{
                             xtype: 'image',
                             src: 'resources/images/graphic-offensive.png',
@@ -290,7 +294,9 @@ Ext.define('SAT.view.main.Main', {
                         items: [{
                             xtype: 'checkbox',
                             width: '3%',
-                            margin: '25 0 0 20'
+                            margin: '25 0 0 20',
+                            action: 'audit-malware',
+                            name: 'chkAudit'
                         },{
                             xtype: 'image',
                             src: 'resources/images/graphic-malware.png',
@@ -401,7 +407,9 @@ Ext.define('SAT.view.main.Main', {
                         items: [{
                             xtype: 'checkbox',
                             width: '3%',
-                            margin: '25 0 0 20'
+                            margin: '25 0 0 20',
+                            action: 'audit-adware',
+                            name: 'chkAudit'
                         },{
                             xtype: 'image',
                             src: 'resources/images/graphic-adware.png',
@@ -512,7 +520,9 @@ Ext.define('SAT.view.main.Main', {
                         items: [{
                             xtype: 'checkbox',
                             width: '3%',
-                            margin: '25 0 0 20'
+                            margin: '25 0 0 20',
+                            action: 'audit-phishing',
+                            name: 'chkAudit'
                         },{
                             xtype: 'image',
                             src: 'resources/images/graphic-phishing.png',
@@ -623,7 +633,9 @@ Ext.define('SAT.view.main.Main', {
                         items: [{
                             xtype: 'checkbox',
                             width: '3%',
-                            margin: '25 0 0 20'
+                            margin: '25 0 0 20',
+                            action: 'audit-filter',
+                            name: 'chkAudit'
                         },{
                             xtype: 'image',
                             src: 'resources/images/graphic-filter.png',
@@ -725,7 +737,7 @@ Ext.define('SAT.view.main.Main', {
 
         },{
             xtype: 'button',
-            text: 'Start Audit',
+            text: 'Start Full Audit',
             margin: '20 0 0 0',
             cls: 'start-button',
             handler: "launchProgressWindow",

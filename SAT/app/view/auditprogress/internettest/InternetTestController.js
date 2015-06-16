@@ -3,8 +3,13 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
     alias: 'controller.auditprogress-internettest-internettest',
     drawChart: function(cmp, opt, mode){
         var me = this,
+            view = this.getView(),
+            chartPnl = view.down('panel[id=chartcontainer]'),
             testMode = mode || "download";
-
+        //EXIT, check for tab disabled
+        if(view.isDisabled()){
+            return false;
+        }
                 $('#chartcontainer').highcharts({
 
                     chart: {
@@ -14,9 +19,11 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                         plotBorderWidth: 0,
                         plotShadow: false
                     },
-
                     title: {
-                        text: 'Internet Connection',
+                        text: 'Test',
+                        style: {
+                            visibility: 'hidden'
+                        }
                     },
                     mode: testMode,
                     pane: {
@@ -109,6 +116,9 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
 
                         if (!chart.renderer.forExport) {
                             var setIntervalHandle = setInterval(function () {
+                                if(!chartPnl){
+                                    return false;
+                                }
                                 var point = chart.series[0].points[0],
                                     newVal,
                                     inc = Math.round((Math.random() - 0.5) * 20);
@@ -125,7 +135,9 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                                     title = "Internet Connection - Upload Test";
                                      point.update(10);
                                 }
-                                chart.setTitle({text: title});
+                                //chart.setTitle({text: title});
+                                //debugger;
+                                chartPnl.setTitle(title);
 
                                 //update Ext components on Right
                                 me.updateStats(newVal, testMode);
