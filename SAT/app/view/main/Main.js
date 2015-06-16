@@ -29,7 +29,7 @@ Ext.define('SAT.view.main.Main', {
     width: 900,
 
     layout: {
-        type: 'absolute'
+        type: 'vbox'
     },
 
     items: [{
