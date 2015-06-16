@@ -1,16 +1,24 @@
 Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.auditprogress-internettest-internettest',
+    initChart: function(){
+        var me = this;
+       setTimeout(function(){
+            me.drawChart();
+        }, 10);
+    },
     drawChart: function(cmp, opt, mode){
         var me = this,
             view = this.getView(),
             chartPnl = view.down('panel[id=chartcontainer]'),
             testMode = mode || "download";
+
         //EXIT, check for tab disabled
         if(view.isDisabled()){
             return false;
         }
-                $('#chartcontainer').highcharts({
+        //console.log('drawChart called...');
+                $('#chartcontainer-innerCt').highcharts({
 
                     chart: {
                         type: 'gauge',
@@ -22,7 +30,7 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                     title: {
                         text: 'Test',
                         style: {
-                            visibility: 'hidden'
+                            display: 'none'
                         }
                     },
                     mode: testMode,
@@ -108,48 +116,53 @@ Ext.define('SAT.view.auditprogress.internettest.InternetTestController', {
                 },
                     // Add some life
                     function (chart) {
-                        var refreshMillisec = 200,
-                            maxRefreshCount = 50,
-                            count = 0,
-                            testMode = "download",
-                            title = "Internet Connection - Download Test";;
+                        try{
+                            var refreshMillisec = 200,
+                                maxRefreshCount = 50,
+                                count = 0,
+                                testMode = "download",
+                                title = "Internet Connection - Download Test";;
 
-                        if (!chart.renderer.forExport) {
-                            var setIntervalHandle = setInterval(function () {
-                                if(!chartPnl){
-                                    return false;
-                                }
-                                var point = chart.series[0].points[0],
-                                    newVal,
-                                    inc = Math.round((Math.random() - 0.5) * 20);
+                            if (!chart.renderer.forExport) {
+                                var setIntervalHandle = setInterval(function () {
+                                    if(!chartPnl){
+                                        return false;
+                                    }
+                                    var point = chart.series[0].points[0],
+                                        newVal,
+                                        inc = Math.round((Math.random() - 0.5) * 20);
 
-                                newVal = point.y + inc;
-                                if (newVal < 0 || newVal > 100) {
-                                    newVal = point.y - inc;
-                                }
-                                point.update(newVal);
+                                    newVal = point.y + inc;
+                                    if (newVal < 0 || newVal > 100) {
+                                        newVal = point.y - inc;
+                                    }
+                                    point.update(newVal);
 
-                                //switch to "Upload" mode
-                                if(count == maxRefreshCount/2){
-                                    testMode = "upload";
-                                    title = "Internet Connection - Upload Test";
-                                     point.update(10);
-                                }
-                                //chart.setTitle({text: title});
-                                //debugger;
-                                chartPnl.setTitle(title);
+                                    //switch to "Upload" mode
+                                    if(count == maxRefreshCount/2){
+                                        testMode = "upload";
+                                        title = "Internet Connection - Upload Test";
+                                         point.update(10);
+                                    }
+                                    //chart.setTitle({text: title});
+                                    //debugger;
+                                    chartPnl.setTitle(title);
 
-                                //update Ext components on Right
-                                me.updateStats(newVal, testMode);
-                                count++;
-                            }, refreshMillisec);
+                                    //update Ext components on Right
+                                    me.updateStats(newVal, testMode);
+                                    count++;
+                                }, refreshMillisec);
 
-                            //kill set interval and stop refresh
-                           setTimeout(function(){
-                                clearInterval(setIntervalHandle);
-                                setIntervalHandle = 0;
-                            }, refreshMillisec * maxRefreshCount);
-                        }
+                                //kill set interval and stop refresh
+                               setTimeout(function(){
+                                    clearInterval(setIntervalHandle);
+                                    setIntervalHandle = 0;
+                                }, refreshMillisec * maxRefreshCount);
+                            }
+                            }
+                            catch(e){
+                                //console.log("Charting Error: " + e);
+                            }
                     });
     },
     updateStats: function(val, testMode){

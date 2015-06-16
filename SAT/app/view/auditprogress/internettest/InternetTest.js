@@ -66,8 +66,10 @@ Ext.define("SAT.view.auditprogress.internettest.InternetTest",{
                 title: "Internet Connection",
                 titleAlign: 'center',
                 flex: 3,
+                //html: "<div id='chartcontainer-el' style='width:100%;height:100%'></div>",
                 listeners: {
-                    afterrender: "drawChart"
+                    afterrender: "initChart"
+                    //resize: "drawChart"
                 }
             },
             {
