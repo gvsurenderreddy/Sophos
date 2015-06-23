@@ -39,17 +39,20 @@
                     var arrUrls = getUrls();
                     $.each(arrUrls, function(index, url){
                             try{
+                            		// Example URLs with JSONP support
+                            		// https://graph.facebook.com/?ids=http://www.stackoverflow.com
+                            		// https://jsonp.afeld.me/?callback=?&url=http://jsonview.com/example.json
+                            		
                                     $.ajax({
                                         url: url,
                                         jsonp: "callback",
                                         dataType: "jsonp",
-                                        data: {
-                                            q: "how are you",
-                                            format: "json"
-                                        },
                                         // Work with the response
-                                        success: function( response ) {
-                                            logResponse("JSONP Test", response);; // server response
+                                        success: function( response, textStatus, jqXHR ) {
+                                            logResponse("JSONP Test", '<b>' + url + '</b> returns ' + JSON.stringify(response)); // server response
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            logResponse("JSONP Test Error", '<b>' + url + '</b> returns ' + textStatus); // error
                                         }
                                     });//end ajax
                             }
@@ -120,6 +123,9 @@
                                              var responseText = xhr.responseText;
                                              logResponse("CORS-Test", responseText);
                                              // process the response.
+
+											 // dump the response headers
+											 dumpHeaders(xhr);
                                       };
 
                                       xhr.onabort = function(XMLHttpRequestProgressEvent) {
@@ -229,6 +235,27 @@
                 function clearResults(){
                     $("#response").empty();
                     $("iframe").remove()
+                }
+
+                function dumpHeaders(xhr)
+                {
+	                 if (xhr.getAllResponseHeaders) {
+	                 	var hdrs = xhr.getAllResponseHeaders();
+	                 	hdrs = hdrs.split('\r\n');
+	                 	var hdrCount = 0;
+	                 	for (var k = 0; k < hdrs.length; k++) {
+	                 		if (hdrs[k].trim().length == 0) {
+	                 			continue;
+	                 		}
+	                 		hdrCount++;
+	                 	}
+	                 	if (hdrCount > 0) {
+	                 		logResponse("Response Header(s)", hdrs.join('<br>'));
+	                 	}
+	                 	else {
+	                 		logResponse("Response Header(s)", 'No visible response header found');
+	                 	}
+	                 }
                 }
     });//on ready
     </script>
