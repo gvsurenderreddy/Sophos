@@ -149,13 +149,16 @@
                         $.each(arrUrls, function(index, url){
                             try{
                                    var img = new Image();
-                                   img.onload = function () {
-                                        logResponse("Image Test-Loaded", arguments)
+                                   img.onload = function (event) {
+                                        logResponse("Image Test-Loaded", event, true);
+                                       	dumpImgInfo(this);
                                    };
                                    img.onerror = function (event) {
                                         logResponse("Image Test-Err", event, true);
+                                       	dumpImgInfo(this);
                                     };
-                                   img.src = url + '/onethatdoesnotexist.gif';
+                                   //img.src = url + '/onethatdoesnotexist.gif';
+                                   img.src = url + '/favicon.ico';
                             }
                             catch(e){
                                logResponse("Exception", e);
@@ -175,12 +178,21 @@
                                     iframe.setAttribute("src", link);
                                     document.body.appendChild(iframe);
                                    iframe.onload = function () {
-                                        var resp = $("#" + id).contents()[0].body.innerHTML;
-                                        logResponse("iFrame-Test-Loaded", resp);
-                                        //$("#" + id).remove();
+                                   		try {
+	                                        var resp = $("#" + id).contents()[0].body.innerHTML;
+	                                        logResponse("iFrame-Test-Loaded", resp);
+	                                        //$("#" + id).remove();
+										}
+										catch(e) {
+	                                        logResponse("iFrame-Exception", e);
+										}
+										finally {
+	                                        dumpIframeInfo(iframe);
+	                                    }
                                     };
                                    iframe.onerror = function () {
                                         logResponse("iFrame-Error", "Error!!!");
+                                        dumpIframeInfo(iframe);
                                    }
                             }
                             catch(e){
@@ -256,6 +268,45 @@
 	                 		logResponse("Response Header(s)", 'No visible response header found');
 	                 	}
 	                 }
+                }
+
+                function dumpImgInfo(elem)
+                {
+                	// reference to document object
+                	var d = elem.ownerDocument;
+                	// reference to window object
+					var win = d.defaultView || d.parentWindow;
+					// reference to navigator object
+                	var nav = win.navigator;
+                	
+                	var infoArr = [];
+                	infoArr.push('Image Source = ' + elem.src);
+                	infoArr.push('Owner Document Domain = ' + d.domain);
+                	infoArr.push('Owner Document Referrer = ' + d.referrer);
+
+                	infoArr.push('User Agent = ' + nav.userAgent);
+                	infoArr.push('Browser = ' + nav.appName + ' ' + nav.appVersion);
+                	
+             		logResponse("IMG Owner Document Info", infoArr.join('<br>'));
+                }
+
+                function dumpIframeInfo(elem)
+                {
+                	// reference to document object
+                	var d = elem.ownerDocument;
+                	// reference to window object
+					var win = d.defaultView || d.parentWindow;
+					// reference to navigator object
+                	var nav = win.navigator;
+                	
+                	var infoArr = [];
+                	infoArr.push('Owner Document Domain = ' + d.domain);
+                	infoArr.push('Owner Document Referrer = ' + d.referrer);
+
+                	infoArr.push('User Agent = ' + nav.userAgent);
+                	infoArr.push('Browser = ' + nav.appName + ' ' + nav.appVersion);
+
+             		logResponse("IFrame Owner Document Info", infoArr.join('<br>'));
                 }
     });//on ready
     </script>
