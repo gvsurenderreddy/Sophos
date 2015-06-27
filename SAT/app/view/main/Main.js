@@ -100,7 +100,7 @@ Ext.define('SAT.view.main.Main', {
                 xtype: 'button',
                 text: 'Start Full Audit',
                 cls: 'start-button',
-                handler: "launchProgressWindow",
+                handler: "onClickStartFullAudit",
                 style: {
                     background: '#007ac6',
                     'border-radius': '5px',
@@ -113,9 +113,8 @@ Ext.define('SAT.view.main.Main', {
                     'box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)',
                     '-webkit-box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)',
                     '-moz-box-shadow': '0px 0px 21px 0px rgba(64,64,64,0.66)'
-}
+                }
             }]
-
         },
         {
             xtype: 'component',
