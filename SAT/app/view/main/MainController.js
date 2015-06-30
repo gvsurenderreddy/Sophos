@@ -80,6 +80,7 @@ Ext.define('SAT.view.main.MainController', {
     renderGridContent: function(value, metaData) {
         var title = metaData.record.data.threatTitle,
             data = {
+                smallImage: metaData.record.data.gridSmallIcon,
                 image: metaData.record.data.gridIcon,
                 title: title,
                 value: value
@@ -88,7 +89,7 @@ Ext.define('SAT.view.main.MainController', {
             var tpl = new Ext.XTemplate(
                 "<div class='gridContent'>" +
                     "<div class='top-div'>"+
-                        "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{imagee}'></div>" +
+                        "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
                     "</div>"+
 
@@ -112,10 +113,6 @@ Ext.define('SAT.view.main.MainController', {
                             "</td>"+
                         "</tr>"+
                     "</table>"+
-
-                    //"<div class='mid-div'>"+
-                    //    "<div class='gridContent' style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left'>{value}</div>"+
-                    //"</div>"+
                 "</div>");
             var html = tpl.apply(data);
 
@@ -125,7 +122,7 @@ Ext.define('SAT.view.main.MainController', {
             var tpl = new Ext.XTemplate(
                 "<div class='gridContent'>" +
                     "<div class='top-div'>"+
-                        "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{imagee}'></div>" +
+                        "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
                         "<div class='result-pass' style='float: left; margin-left: 5px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px;'>Passed!</div>"+
@@ -145,7 +142,10 @@ Ext.define('SAT.view.main.MainController', {
             var html = tpl.apply(data);
             return html;
         }
-        //var tpl = new Ext.XTemplate("<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div><br><div class='gridContent'  style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400'>{value}</div>");
+        //var tpl = new Ext.XTemplate(
+        //    "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>" +
+        //    "<br>" +
+        //    "<div class='gridContent'  style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400'>{value}</div>");
     },
 
     onClickStartFullAudit: function(a, b) {
