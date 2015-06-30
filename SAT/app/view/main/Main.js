@@ -11,7 +11,6 @@ Ext.define('SAT.view.main.Main', {
         'SAT.view.main.MainController',
         'SAT.view.main.MainModel',
         'SAT.store.main.MainStore',
-        'SAT.store.main.SpeedTestStore',
         'Ext.chart.series.Pie',
         'Ext.chart.PolarChart',
         'Ext.chart.interactions.Rotate',
