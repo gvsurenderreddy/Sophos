@@ -4,6 +4,7 @@
         .x-form-text-default.x-form-textarea {
           font-weight: 400;
           font-family: Flama-Basic;
+          color: #2ac8ef
         }
       }
 
@@ -23,11 +24,13 @@
         background: url(images/form/checkbox.png) no-repeat;
         width: 15px;
         height: 15px;
+        margin-top: 38px;
       }
       .x-form-cb-checked .x-form-checkbox-default {
           background: url("images/check-on.png");
           width: 20px;
           height: 18px;
+          margin-top: 38px;
       }
       .x-form-cb-checked .x-field-default-form-checkbox-focus {
           background: url("images/check-on.png");
@@ -35,8 +38,24 @@
           height: 18px;
       }
      .main-panel .x-autocontainer-outerCt {
-         background: #fbfbfb;
+//         background: #fbfbfb;
          font-family: Flama-Basic;
          border: #dddddd;
      }
+
+    .x-grid-cell-special {
+        visibility: hidden;
+     }
+
+    .x-grid-item-selected {
+      background-color: #ffffff;
+    }
+
+    .x-grid-item-over {
+      background-color: #ffffff;
+    },
+
+    .x-grid-item-container {
+      padding-left: 15px;
+    }
 }
