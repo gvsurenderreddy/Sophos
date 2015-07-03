@@ -99,14 +99,14 @@ Ext.define('SAT.view.main.MainController', {
                                 "<div class='ping-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>10ms</div>"+
                             "</td>"+
                             "<td class='download'>" +
-                                "<p style='margin-top: 10px; color: #0171B9; font-size: smaller; font-weight: 600;' class='ping-text'>Download Speed</p>"+
-                                "<div class='ping-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>45.2Mbps</div>"+
+                                "<p style='margin-top: 10px; color: #0171B9; font-size: smaller; font-weight: 600;' class='download-text'>Download Speed</p>"+
+                                "<div class='download-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>45.2Mbps</div>"+
                             "</td>"+
                             "<td class='upload'>" +
-                                "<p style='margin-top: 10px; color: #0171B9; font-size: smaller; font-weight: 600;' class='ping-text'>Upload Speed</p>"+
-                                "<div class='ping-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>15.9Mbps</div>"+
+                                "<p style='margin-top: 10px; color: #0171B9; font-size: smaller; font-weight: 600;' class='upload-text'>Upload Speed</p>"+
+                                "<div class='upload-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>15.9Mbps</div>"+
                             "</td>"+
-                            "<td style='padding-left: 10px' class='upload'>" +
+                            "<td style='padding-left: 10px' class='content-td'>" +
                                 "<div class='gridContent' style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left'>{value}</div>"+
                                 "<a href='#details' style='float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
                             "</td>"+
@@ -168,6 +168,24 @@ Ext.define('SAT.view.main.MainController', {
         initGrid.hide();
         resultsGrid.show();
 
+        var counter = 0;
+        var u = setInterval(function(){
+            counter += 10;
+            if(counter === 50){
+                clearInterval(u);
+            }
+            me.updateStats(Math.round((Math.random()) * 20), 'upload');
+        },1000);
+
+        var c = 0;
+        var d = setInterval(function(){
+            c += 10;
+            if(c === 50){
+                clearInterval(d);
+            }
+            me.updateStats(Math.round((Math.random()) * 20), 'download');
+        },1000);
+
         var timesRun = 0;
         var f = setInterval(function(){
             timesRun += 20;
@@ -185,41 +203,51 @@ Ext.define('SAT.view.main.MainController', {
     },
 
     updateChart: function(t, o) {
-        var chart = Ext.ComponentQuery.query('[xtype=polar]')[1];
+        var chart = Ext.ComponentQuery.query('[xtype=polar]');
 
-        var obj = [
-            {cat: 'Total global threats', data1: t},
-            {cat: 'Other threats', data1: o}
-        ];
-        chart.store.loadRawData(obj);
-        chart.redraw();
+        Ext.each(chart, function(c){
+            var obj = [
+                {cat: 'Total global threats', data1: t},
+                {cat: 'Other threats', data1: o}
+            ];
+            c.store.loadRawData(obj);
+            c.redraw();
+        });
 
         if(t === 100) {
-            var centerTxtVal = chart.store.data.items[0].data.data1 + "%",
-                sprite = chart.getSurface();
+            Ext.each(chart, function(c){
+                var centerTxtVal = c.store.data.items[0].data.data1 + "%",
+                    sprite = c.getSurface();
 
-            sprite.add({
-                type: 'text',
-                text: centerTxtVal,
-                fontSize: 12,
-                color: '#2ac8ef',
-                x: 35,
-                y: 48
+                sprite.add({
+                    type: 'text',
+                    text: centerTxtVal,
+                    fontSize: 12,
+                    color: '#2ac8ef',
+                    x: 35,
+                    y: 48
+                });
             });
 
-            var r = Ext.select('.result-pass').elements[0];
-            r.style.setProperty('display', 'block');
+            var results = Ext.select('.result-pass').elements;
+            Ext.each(results, function(r){
+                r.style.setProperty('display', 'block');
+            });
 
-            var b = Ext.select('.rerun').elements[0];
-            b.style.setProperty('display', 'block');
+
+            var reruns = Ext.select('.rerun').elements;
+            Ext.each(reruns, function(r){
+                r.style.setProperty('display', 'block');
+            });
         }
     },
 
     updateStats: function(val, testMode){
-        var pnlRef = (testMode == "download" ? "pnlDownloadStats" : "pnlUploadStats");
-        pnl= this.lookupReference(pnlRef);
-        if(pnl){
-            pnl.update( val + " <span class='internet-stats-units'>Mbps</span>");
+        var sRef = (testMode == "download" ? ".download-box" : ".upload-box");
+        var speed = Ext.select(sRef).elements[0];
+
+        if(speed){
+            speed.innerHTML = val+'Mbps';
         }
     },
 
