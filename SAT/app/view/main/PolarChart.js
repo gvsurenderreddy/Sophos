@@ -1,5 +1,8 @@
 Ext.define('SAT.view.main.PolarChart', {
     extend: 'Ext.panel.Panel',
+
+    requires: ['SAT.store.main.ChartStore'],
+
     xtype: 'polarchart',
 
     width: 75,
@@ -15,13 +18,7 @@ Ext.define('SAT.view.main.PolarChart', {
             height: 90,
             colors: ["#2ac8ef", "#ececec"],
             animate: false,
-            store: Ext.create('Ext.data.JsonStore', {
-                fields: ['os', 'data1'],
-                data: [
-                    {cat: 'Total global threats', data1: 18},
-                    {cat: 'Other threats', data1: 82}
-                ]
-            }),
+            store: 'main.ChartStore',
             insetPadding: {top: 2, left: 2, right: 2, bottom: 2},
             innerPadding: 2,
             series: [{
@@ -39,7 +36,7 @@ Ext.define('SAT.view.main.PolarChart', {
             listeners: {
                 afterrender: function (cmp) {
                     var surface = cmp.getSurface(),
-                        store = cmp.getStore(),
+                        store = cmp.getStore();
                         centerTxtVal = store.data.items[0].data.data1 + "%",
                         sprite = surface.add({
                             type: 'text',
@@ -49,7 +46,7 @@ Ext.define('SAT.view.main.PolarChart', {
                             x: 40,
                             y: 45
                         });
-                    sprite.show(true);
+                        sprite.show(true);
                 }
             }
         }]

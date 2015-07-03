@@ -124,7 +124,7 @@ Ext.define('SAT.view.main.MainController', {
                         "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px;'>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
@@ -135,7 +135,7 @@ Ext.define('SAT.view.main.MainController', {
                     "<br><br>"+
                     "<div class='bottom-div' style='margin-top: 25px;'>"+
                         "<a href='#details' style='float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
-                        //"<input type='button' value='Rerun Test' style='margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px;'>"+
+                        "<input type='button' value='Rerun Test' style='margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
                     "</div>"+
                 "</div>");
             var html = tpl.apply(data);
@@ -161,16 +161,30 @@ Ext.define('SAT.view.main.MainController', {
 
     onClickStartAudit: function(a, b) {
         var view = this.getView(),
+            me = this,
             initGrid = view.down('[itemId=init-grid]'),
             resultsGrid = view.down('[itemId=results-grid]');
 
         initGrid.hide();
         resultsGrid.show();
+
+//        setTimeout(function(){
+//            me.updateStats();
+//        }, 10);
+
         var buttons = Ext.ComponentQuery.query('[cls=start-button]');
         Ext.each(buttons, function(b){
             b.setText('View Full Results');
             b.getEl().setStyle('padding', '10px 2px');
         });
+    },
+
+    updateStats: function(val, testMode){
+        var pnlRef = (testMode == "download" ? "pnlDownloadStats" : "pnlUploadStats");
+        pnl= this.lookupReference(pnlRef);
+        if(pnl){
+            pnl.update( val + " <span class='internet-stats-units'>Mbps</span>");
+        }
     },
 
     onClickStartFullAudit: function(a, b) {

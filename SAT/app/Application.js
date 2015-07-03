@@ -9,7 +9,8 @@ Ext.define('SAT.Application', {
     name: 'SAT',
 
     stores: [
-        'main.MainStore'
+        'main.MainStore',
+        'main.ChartStore'
     ],
 
     models: [

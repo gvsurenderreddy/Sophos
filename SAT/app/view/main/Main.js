@@ -164,7 +164,7 @@ Ext.define('SAT.view.main.Main', {
                         renderer: 'renderGridContent',
                         itemId: 'gridContent',
                         width: 620
-                    }]
+                }]
             },
             {
                 xtype: 'grid',
