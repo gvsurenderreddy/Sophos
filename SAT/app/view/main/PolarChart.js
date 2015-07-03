@@ -28,7 +28,6 @@ Ext.define('SAT.view.main.PolarChart', {
                 type: 'pie',
                 angleField: 'data1',
                 donut: 95,
-                //highlight: true,
                 tooltip: {
                     trackMouse: true,
                     style: 'background: #fff',
@@ -47,7 +46,7 @@ Ext.define('SAT.view.main.PolarChart', {
                             text: centerTxtVal,
                             fontSize: 12,
                             color: '#2ac8ef',
-                            x: 50,
+                            x: 40,
                             y: 45
                         });
                     sprite.show(true);

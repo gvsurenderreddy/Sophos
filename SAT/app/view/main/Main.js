@@ -104,7 +104,7 @@ Ext.define('SAT.view.main.Main', {
                     xtype: 'button',
                     text: 'Start Audit',
                     cls: 'start-button',
-                    handler: "launchProgressWindow",
+                    handler: "onClickStartAudit",
                     style: {
                         background: '#007ac6',
                         'border-radius': '5px',
@@ -129,8 +129,49 @@ Ext.define('SAT.view.main.Main', {
             },
             {
                 xtype: 'grid',
+                itemId: 'init-grid',
                 store: 'main.MainStore',
                 border: true,
+                margin: '10 0 0 0',
+                width: 800,
+                viewConfig: {
+                    listeners: {
+                        itemclick: 'onThreatClick',
+                        expandbody: 'onThreatExpandBody',
+                        collapsebody: 'onThreatCollapseBody'
+                    }
+                },
+                hideHeaders: true,
+                columns: [
+                    {
+                        dataIndex: 'active',
+                        xtype: 'widgetcolumn',
+                        widget: {
+                            xtype: 'checkbox',
+                            handler: 'handleCheckBoxSelection',
+                            name: 'chkAudit'
+                        },
+                        width: 30
+                    },
+                    {
+                        dataIndex: 'gridIcon',
+                        renderer: 'renderGridIcons',
+                        itemId: 'gridIcons',
+                        width: 100
+                    },
+                    {
+                        dataIndex: 'gridContent',
+                        renderer: 'renderGridContent',
+                        itemId: 'gridContent',
+                        width: 620
+                    }]
+            },
+            {
+                xtype: 'grid',
+                itemId: 'results-grid',
+                store: 'main.MainStore',
+                border: true,
+                hidden: true,
                 margin: '10 0 0 0',
                 width: 800,
                 viewConfig: {
@@ -149,35 +190,19 @@ Ext.define('SAT.view.main.Main', {
                 }],
                 columns: [
                     {
-                        dataIndex: 'active',
-                        xtype: 'widgetcolumn',
-                        widget: {
-                            xtype: 'checkbox',
-                            handler: 'handleCheckBoxSelection',
-                            name: 'chkAudit'
-                        },
-                        width: 30,
-                        hidden: true
-                    },
-                    {
-                        dataIndex: 'gridIcon',
-                        renderer: 'renderGridIcons',
-                        width: 100,
-                        hidden: true
-                    },
-                    {
                         dataIndex: 'polarData',
                         xtype: 'widgetcolumn',
+                        itemId: 'polarChart',
                         widget: {
                             xtype: 'polarchart'
                         },
-                        width: 120,
-                        hidden: false
+                        width: 120
                     },
                     {
                         dataIndex: 'gridContent',
-                        renderer: 'renderGridContent',
-                        width: 620
+                        renderer: 'renderGridResultsContent',
+                        itemId: 'gridContent',
+                        width: 640
                     }]
             },
             {
@@ -185,7 +210,7 @@ Ext.define('SAT.view.main.Main', {
                 text: 'Start Audit',
                 margin: '20 0 0 0',
                 cls: 'start-button',
-                handler: "launchProgressWindow",
+                handler: "onClickStartAudit",
                 style: {
                     background: '#007ac6',
                     'border-radius': '5px',

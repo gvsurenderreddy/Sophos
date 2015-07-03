@@ -77,11 +77,10 @@ Ext.define('SAT.view.main.MainController', {
         return html;
     },
 
-    renderGridContent: function(value, metaData) {
+    renderGridResultsContent: function(value, metaData) {
         var title = metaData.record.data.threatTitle,
             data = {
                 smallImage: metaData.record.data.gridSmallIcon,
-                image: metaData.record.data.gridIcon,
                 title: title,
                 value: value
             };
@@ -142,10 +141,36 @@ Ext.define('SAT.view.main.MainController', {
             var html = tpl.apply(data);
             return html;
         }
-        //var tpl = new Ext.XTemplate(
-        //    "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>" +
-        //    "<br>" +
-        //    "<div class='gridContent'  style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400'>{value}</div>");
+    },
+
+    renderGridContent: function(value, metaData) {
+        var title = metaData.record.data.threatTitle,
+            data = {
+                image: metaData.record.data.gridIcon,
+                title: title,
+                value: value
+            };
+
+        var tpl = new Ext.XTemplate(
+                "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>" +
+                "<br>"+
+                "<div class='gridContent'  style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400'>{value}</div>");
+        var html = tpl.apply(data);
+        return html;
+    },
+
+    onClickStartAudit: function(a, b) {
+        var view = this.getView(),
+            initGrid = view.down('[itemId=init-grid]'),
+            resultsGrid = view.down('[itemId=results-grid]');
+
+        initGrid.hide();
+        resultsGrid.show();
+        var buttons = Ext.ComponentQuery.query('[cls=start-button]');
+        Ext.each(buttons, function(b){
+            b.setText('View Full Results');
+            b.getEl().setStyle('padding', '10px 2px');
+        });
     },
 
     onClickStartFullAudit: function(a, b) {
