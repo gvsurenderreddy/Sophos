@@ -192,7 +192,6 @@ Ext.define('SAT.view.main.Main', {
                     {
                         dataIndex: 'polarData',
                         xtype: 'widgetcolumn',
-                        itemId: 'polarChart',
                         widget: {
                             xtype: 'polarchart'
                         },

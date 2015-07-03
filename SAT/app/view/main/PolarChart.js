@@ -13,6 +13,7 @@ Ext.define('SAT.view.main.PolarChart', {
     items:[
         {
             xtype: 'polar',
+            itemId: 'polarChart',
             header: false,
             width: 75,
             height: 90,
@@ -35,18 +36,18 @@ Ext.define('SAT.view.main.PolarChart', {
             }],
             listeners: {
                 afterrender: function (cmp) {
-                    var surface = cmp.getSurface(),
-                        store = cmp.getStore();
-                        centerTxtVal = store.data.items[0].data.data1 + "%",
-                        sprite = surface.add({
-                            type: 'text',
-                            text: centerTxtVal,
-                            fontSize: 12,
-                            color: '#2ac8ef',
-                            x: 40,
-                            y: 45
-                        });
-                        sprite.show(true);
+//                    var surface = cmp.getSurface(),
+//                        store = cmp.getStore();
+//                        centerTxtVal = store.data.items[0].data.data1 + "%",
+//                        sprite = surface.add({
+//                            type: 'text',
+//                            text: centerTxtVal,
+//                            fontSize: 12,
+//                            color: '#2ac8ef',
+//                            x: 40,
+//                            y: 45
+//                        });
+//                    sprite.show(true);
                 }
             }
         }]

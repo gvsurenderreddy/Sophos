@@ -135,7 +135,7 @@ Ext.define('SAT.view.main.MainController', {
                     "<br><br>"+
                     "<div class='bottom-div' style='margin-top: 25px;'>"+
                         "<a href='#details' style='float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
-                        "<input type='button' value='Rerun Test' style='margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
+                        "<input type='button' class='rerun' value='Rerun Test' style='margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
                     "</div>"+
                 "</div>");
             var html = tpl.apply(data);
@@ -168,15 +168,51 @@ Ext.define('SAT.view.main.MainController', {
         initGrid.hide();
         resultsGrid.show();
 
-//        setTimeout(function(){
-//            me.updateStats();
-//        }, 10);
+        var timesRun = 0;
+        var f = setInterval(function(){
+            timesRun += 20;
+            if(timesRun === 100){
+                clearInterval(f);
+            }
+            me.updateChart(timesRun, 100-timesRun);
+        }, 1000);
 
         var buttons = Ext.ComponentQuery.query('[cls=start-button]');
         Ext.each(buttons, function(b){
             b.setText('View Full Results');
             b.getEl().setStyle('padding', '10px 2px');
         });
+    },
+
+    updateChart: function(t, o) {
+        var chart = Ext.ComponentQuery.query('[xtype=polar]')[1];
+
+        var obj = [
+            {cat: 'Total global threats', data1: t},
+            {cat: 'Other threats', data1: o}
+        ];
+        chart.store.loadRawData(obj);
+        chart.redraw();
+
+        if(t === 100) {
+            var centerTxtVal = chart.store.data.items[0].data.data1 + "%",
+                sprite = chart.getSurface();
+
+            sprite.add({
+                type: 'text',
+                text: centerTxtVal,
+                fontSize: 12,
+                color: '#2ac8ef',
+                x: 35,
+                y: 48
+            });
+
+            var r = Ext.select('.result-pass').elements[0];
+            r.style.setProperty('display', 'block');
+
+            var b = Ext.select('.rerun').elements[0];
+            b.style.setProperty('display', 'block');
+        }
     },
 
     updateStats: function(val, testMode){
