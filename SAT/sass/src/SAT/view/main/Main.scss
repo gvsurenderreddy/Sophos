@@ -56,7 +56,7 @@
     }
 
     .init-grid .x-grid-item-container {
-      padding-left: 14px;
+      padding-left: 25px;
     }
 
     .results-grid .x-grid-item-container {
@@ -68,5 +68,13 @@
       border-style: solid;
       border-width: thin;
       border-color: rgb(211, 211, 211);
+    }
+
+    .x-grid-with-row-lines .x-grid-item:first-child {
+      border-top-width: 0px;
+    }
+    .x-grid-with-row-lines .x-grid-item:last-child {
+      border-bottom-width: 0px;
+      margin-bottom: 5px;
     }
 }
