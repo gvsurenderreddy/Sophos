@@ -55,13 +55,18 @@
       background-color: #ffffff;
     }
 
-    .x-grid-item-container {
-      padding-left: 10px;
+    .init-grid .x-grid-item-container {
+      padding-left: 14px;
     }
 
-    .x-grid-body {
-      border-radius: 7px;
+    .results-grid .x-grid-item-container {
+      padding-left: 7px;
+    }
+
+    .x-grid-view {
+      border-radius: 8px;
       border-style: solid;
-      border-color: lightgray;
+      border-width: thin;
+      border-color: rgb(211, 211, 211);
     }
 }
