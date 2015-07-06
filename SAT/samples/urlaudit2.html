@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title></title>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<!--    <script type="text/javascript" src="jquery.ajax-cross-origin.min.js"></script>-->
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+<style type="text/css" id="main">
+    #main{
+        padding: 20px;
+        width: 80%;
+        min-height: 800px;
+        margin: 0 auto;
+    }
+    div{
+        /*border: 1px solid silver;*/
+    }
+    table.table-striped{
+        table-layout: fixed;
+        border: 1px solid gray;
+    }
+    table.table-striped tr.tblHeader {
+        font-weight: bold;
+        background-color: #E0E0E0;
+    }
+    table.table-striped td:nth-child(1),
+    table.table-striped td:nth-child(2),
+    table.table-striped td:nth-child(3){
+        width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    table.table-striped td:nth-child(4),
+    table.table-striped td:nth-child(5){
+        /*width: 350px;*/
+    }
+    .results-row {
+        overflow: auto;
+        margin: 5px;
+        /*max-height: 200px;*/
+        border-bottom: 1px solid silver;
+    }
+</style>
+
+<script type="text/javascript">
+$(document).ready(function () { //jQuery on ready
+
+    window.onerror=function(){
+        logResponse("Windows Error:", arguments, true);
+    }
+
+    //------------------- url looper ---------------------------------//
+    /*
+    TODO:
+    1. Append more URL
+    2. Include Methods: Ajax, CORS, JSONP
+    3. Display Table: URL, Method, Duration, XHR Response, XHR Headers, Response HTML
+    */
+    $("#urlLooper").on("click", function urlLooper(){
+        //clear results...
+        $("#clearResults").trigger("click");
+
+        var list = [
+            'http://www.abc.com','http://www.peets.com', 'http://www.lasvegas.com', 'http://www.msn.com','http://www.rediff.com','http://www.gmail.com', '../data/1.json',
+            'http://www.abc.com','http://www.peets.com', 'http://www.lasvegas.com', 'http://www.msn.com','http://www.rediff.com','http://www.gmail.com', '../data/1.json',
+            'http://www.abc.com','http://www.peets.com', 'http://www.lasvegas.com', 'http://www.msn.com','http://www.rediff.com','http://www.gmail.com', '../data/1.json',
+            'http://www.abc.com','http://www.peets.com', 'http://www.lasvegas.com', 'http://www.msn.com','http://www.rediff.com','http://www.gmail.com', '../data/1.json'
+        ];
+        var i;
+        var deferreds = [];
+        var results = [];
+        var additionalUrls = getUrls();
+
+        function doAjax(url,dObject) {
+            //var xdata = {json: $.toJSON({name: number}), delay: 1};
+            $.ajax({
+                url:url,
+                timerStart: new Date().getTime(),
+                timeout: 5000, // sets timeout to 3 seconds
+                type: "GET",
+                contentType: 'text/plain',
+                crossDomain: true,
+                xhrFields: {
+                    // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
+                    // This can be used to set the 'withCredentials' property.
+                    // Set the value to 'true' if you'd like to pass cookies to the server.
+                    // If this is enabled, your server must respond with the header
+                    // 'Access-Control-Allow-Credentials: true'.
+                    withCredentials: false
+                },
+                headers: {
+                    // Set any custom headers here.
+                    // If you set any non-simple headers, your server must include these
+                    // headers in the 'Access-Control-Allow-Headers' response header.
+                },
+                complete: function(data) {
+                    data.url = this.url;
+                    data.method = 'CORS',
+                    data.timerStart = this.timerStart;
+                    data.timerEnd = new Date().getTime();
+                    data.timerDuration = (data.timerEnd - data.timerStart),
+                    results.push(data);
+                    dObject.resolve();
+                    //logResponse("urlLooper", 'complete ' + this.url );
+                }
+            });
+        }
+
+        function doJsonp(url,dObject){
+            try{
+                // Example URLs with JSONP support
+                // https://graph.facebook.com/?ids=http://www.stackoverflow.com
+                // https://jsonp.afeld.me/?callback=?&url=http://jsonview.com/example.json
+
+                $.ajax({
+                    url: url,
+                    timerStart: new Date().getTime(),
+                    jsonp: "callback",
+                    dataType: "jsonp",
+                    // Work with the response
+                    complete: function(data) {
+                        data.url = this.url;
+                        data.method = 'JSONP',
+                        data.timerStart = this.timerStart;
+                        data.timerEnd = new Date().getTime();
+                        data.timerDuration = (data.timerEnd - data.timerStart),
+                        results.push(data);
+                        dObject.resolve();
+                        //logResponse("urlLooper", 'complete ' + this.url );
+                    }
+                });//end ajax
+            }
+            catch(e){
+                logResponse("Exception", e);
+            }
+        }
+
+        //add additional URLS
+        if(additionalUrls.length > 0){
+            list = list.concat(additionalUrls);
+        }
+        //wait spinner .....
+        logResponse("Audit status", "Loading and testing " + list.length + " URLs...please wait..... <img class='clsRowSpinner' src='../resources/images/loading.gif'>");
+
+        for(i = 0; i < list.length; i++) {
+            var url = list[i];//  + '?' + new Date().getTime();
+
+            var dObject = new $.Deferred();
+            deferreds.push(dObject);
+            if($("#chkCors").is(':checked')){
+                doAjax(url,dObject);
+            }
+            if($("#chkJsonp").is(':checked')){
+                doJsonp(url,dObject);
+            }
+        }
+
+        // check if all ajax calls have finished
+        $.when.apply($, deferreds)
+         .done(function() {
+                console.log(results);
+                //remove spinner
+                //$(".clsRowSpinner").closest(".results-row").remove();
+                $("#clearResults").trigger("click");
+
+                var htmlResults = "<table class='table table-striped'>";
+                    htmlResults += "<tr class='tblHeader'><td>URL</td><td>Method</td><td>Duration (ms)</td><td>XHR Response</td><td>XHR Headers</td></tr>";
+                //sort by method - CORS, JSONP etc
+                results = _.sortBy(results, 'method');
+                $.each(results, function(index, resp){
+                    htmlResults += "<tr><td>" + resp.url +"</td>" +
+                                        "<td>" + (resp.method) + "</td>" +
+                                        "<td>" + (resp.timerDuration) + "</td>" +
+                                        "<td>" + parseAjaxResp(resp) + "</td>" +
+                                        "<td>" + dumpHeaders(resp) + "</td>" +
+                                    "</tr>";
+                });
+                htmlResults += "</table>";
+                try{
+                    //Display Final results
+                    logResponse("URL Audit Results:" ,  htmlResults);
+
+                }catch(e){
+                    //to handle HTML display errors from ajax resp HTML
+                }
+        });//end:done
+
+    });//end - url looper
+
+    //---------------------------- helpers ------------------------------------//
+    $("#clearResults").on("click", function (){
+        $("#response").empty();
+        $("iframe").remove()
+    });
+
+    function getUrls(){
+        var arrUrls = $("#urllist").val().split(",");
+        return arrUrls;
+    }
+    function logResponse(hdr, msg, isObject){
+        var msgTxt = msg;
+        if(isObject){
+            msgTxt = "";
+            $.each(msg, function(key, val){
+                msgTxt += key + "=" + val + "|";
+            });
+        }
+        $("#response").append("<div class='results-row'><b><u>" + hdr + "</u></b><br>" + msgTxt + "</div>");
+    }
+    function objToString (obj) {
+        var str = '';
+        for (var p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                str += p + '::' + obj[p] + '\n';
+            }
+        }
+        return str;
+    }
+
+    function parseAjaxResp(resp){
+        var msg = "";
+        //msg += "|URL:" + resp.url || "";
+        msg += "|readyState:" + resp.readyState;
+        //msg += "|responseText:" + ($('<div/>').html(resp.responseText).text() || "none");
+        msg += "|status:" + resp.status;
+        msg += "|statusText:" + resp.statusText;
+        //msg += "|responseText:" + (resp.responseText || "none");
+        //msg += "|timeout:" + resp.timeout;
+        return msg;
+    }
+
+    function clearResults(){
+        $("#response").empty();
+        $("iframe").remove()
+    }
+
+    function dumpHeaders(xhr)
+    {
+        var msg = "";
+        if (xhr.getAllResponseHeaders) {
+            var hdrs = xhr.getAllResponseHeaders();
+            hdrs = hdrs.split('\r\n');
+            var hdrCount = 0;
+            for (var k = 0; k < hdrs.length; k++) {
+                if (hdrs[k].trim().length == 0) {
+                    continue;
+                }
+                hdrCount++;
+            }
+            if (hdrCount > 0) {
+                msg += hdrs.join('|');
+            }
+            else {
+                msg += 'No visible response header found';
+            }
+        }
+        return msg;
+    }
+
+    function dumpImgInfo(elem)
+    {
+        // reference to document object
+        var d = elem.ownerDocument;
+        // reference to window object
+        var win = d.defaultView || d.parentWindow;
+        // reference to navigator object
+        var nav = win.navigator;
+
+        var infoArr = [];
+        infoArr.push('Image Source = ' + elem.src);
+        infoArr.push('Owner Document Domain = ' + d.domain);
+        infoArr.push('Owner Document Referrer = ' + d.referrer);
+
+        infoArr.push('User Agent = ' + nav.userAgent);
+        infoArr.push('Browser = ' + nav.appName + ' ' + nav.appVersion);
+
+        logResponse("IMG Owner Document Info", infoArr.join('<br>'));
+    }
+
+    function dumpIframeInfo(elem)
+    {
+        // reference to document object
+        var d = elem.ownerDocument;
+        // reference to window object
+        var win = d.defaultView || d.parentWindow;
+        // reference to navigator object
+        var nav = win.navigator;
+
+        var infoArr = [];
+        infoArr.push('Owner Document Domain = ' + d.domain);
+        infoArr.push('Owner Document Referrer = ' + d.referrer);
+
+        infoArr.push('User Agent = ' + nav.userAgent);
+        infoArr.push('Browser = ' + nav.appName + ' ' + nav.appVersion);
+
+        logResponse("IFrame Owner Document Info", infoArr.join('<br>'));
+    }
+
+
+});//on ready
+</script>
+</head>
+<body>
+
+<div id="main">
+
+    <label>Paste URLs below (comma sperated) to append to Test URLs:</label>
+    <textarea class="panel panel-default" id="urllist" style="width:100%;height:100px;"></textarea>
+    Test using:
+    <input id="chkCors" type="checkbox" value="CORS" checked="checked">CORS
+    <input id="chkJsonp" type="checkbox" value="JSONP">JSONP
+
+    <div class="panel panel-default" id="toolbar" style="border-width: 0px; margin: 10px;">
+        <button class="btn btn-primary"  id="urlLooper">Start URL Audit</button>
+        <button class="btn btn-danger" id="clearResults">Clear Results</button>
+    </div>
+
+    <div class="panel panel-default" id="response"></div>
+
+
+</div>
+
+</body>
+</html>
