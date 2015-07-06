@@ -212,23 +212,20 @@ Ext.define('SAT.view.main.MainController', {
             ];
             c.store.loadRawData(obj);
             c.redraw();
+            var centerTxtVal = c.store.data.items[0].data.data1 + "%",
+                sprite = c.getSurface();
+            sprite.removeAll(true);
+            sprite.add({
+                type: 'text',
+                text: centerTxtVal,
+                fontSize: 12,
+                color: '#2ac8ef',
+                x: t===100 ? 35 : 40,
+                y: 48
+            });
         });
 
         if(t === 100) {
-            Ext.each(chart, function(c){
-                var centerTxtVal = c.store.data.items[0].data.data1 + "%",
-                    sprite = c.getSurface();
-
-                sprite.add({
-                    type: 'text',
-                    text: centerTxtVal,
-                    fontSize: 12,
-                    color: '#2ac8ef',
-                    x: 35,
-                    y: 48
-                });
-            });
-
             var results = Ext.select('.result-pass').elements;
             Ext.each(results, function(r){
                 r.style.setProperty('display', 'block');

@@ -131,6 +131,10 @@ Ext.define('SAT.view.main.Main', {
                 xtype: 'grid',
                 itemId: 'init-grid',
                 store: 'main.MainStore',
+                cls: 'init-grid',
+                style: {
+                  'border-width':'12px'
+                },
                 border: true,
                 margin: '10 0 0 0',
                 width: 800,
@@ -169,6 +173,7 @@ Ext.define('SAT.view.main.Main', {
             {
                 xtype: 'grid',
                 itemId: 'results-grid',
+                cls: 'results-grid',
                 store: 'main.MainStore',
                 border: true,
                 hidden: true,
