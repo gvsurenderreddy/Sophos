@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<!--    <script type="text/javascript" src="jquery.ajax-cross-origin.min.js"></script>-->
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style type="text/css" id="main">
+        #main{
+            padding: 20px;
+            width: 80%;
+            min-height: 800px;
+            margin: 0 auto;
+        }
+        div{
+            /*border: 1px solid silver;*/
+        }
+        .results-row {
+            overflow: auto;
+            margin: 5px;
+            max-height: 200px;
+            border-bottom: 1px solid silver;
+        }
+    </style>
+
+    <script type="text/javascript">
+     $(document).ready(function () { //jQuery on ready
+
+                window.onerror=function(){
+                    logResponse("Windows Error:", arguments, true);
+                }
+
+
+                //-------------------- JSONP ----------------------------------//
+                $("#JSONPTest").on("click", function(){
+                    var arrUrls = getUrls();
+                    $.each(arrUrls, function(index, url){
+                            try{
+                            		// Example URLs with JSONP support
+                            		// https://graph.facebook.com/?ids=http://www.stackoverflow.com
+                            		// https://jsonp.afeld.me/?callback=?&url=http://jsonview.com/example.json
+                            		
+                                    $.ajax({
+                                        url: url,
+                                        jsonp: "callback",
+                                        dataType: "jsonp",
+                                        // Work with the response
+                                        success: function( response, textStatus, jqXHR ) {
+                                            logResponse("JSONP Test", '<b>' + url + '</b> returns ' + JSON.stringify(response)); // server response
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            logResponse("JSONP Test Error", '<b>' + url + '</b> returns ' + textStatus); // error
+                                        }
+                                    });//end ajax
+                            }
+                            catch(e){
+                               logResponse("Exception", e);
+                            }
+                    });//$.each
+               });
+
+                //-------------------------- ajax --------------------------------//
+               $("#ajaxTest").on("click", function(){
+                        var arrUrls = getUrls();
+                        $.each(arrUrls, function(index, url){
+                            try{
+
+                                    var jqxhr = $.ajax(url)
+                                          .done(function(data, textStatus, jqXHR) {
+                                                var msg = parseAjaxResp(jqXHR);
+                                                logResponse("Response:", msg);
+                                          })
+                                          .fail(function(jqXHR, textStatus, errorThrown) {
+                                                var msg = parseAjaxResp(jqXHR);
+                                                logResponse("Response:", msg);
+                                          });
+                                          /*
+                                          .always(function(jqXHR, statusText) {
+                                                //alert( "complete" );
+                                                var msg = parseAjaxResp(jqXHR);
+                                                logResponse("Response:", msg);
+                                          });
+                                          */
+                            }
+                            catch(e){
+                               logResponse("Exception", e);
+                            }
+                        });
+               });
+
+                //-------------------- CORS ----------------------------------//
+                $("#CORSTest").on("click", function(){
+                    var arrUrls = getUrls();
+                    $.each(arrUrls, function(index, url){
+                            try{
+                                   var xhr = new XMLHttpRequest(),
+                                        method = "GET";
+                                      if ("withCredentials" in xhr) {
+
+                                        // Check if the XMLHttpRequest object has a "withCredentials" property.
+                                        // "withCredentials" only exists on XMLHTTPRequest2 objects.
+                                        xhr.open(method, url, true);
+
+                                      } else if (typeof XDomainRequest != "undefined") {
+
+                                        // Otherwise, check if XDomainRequest.
+                                        // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+                                        xhr = new XDomainRequest();
+                                        xhr.open(method, url);
+
+                                      } else {
+
+                                        // Otherwise, CORS is not supported by the browser.
+                                        logResponse("CORS-Test", "CORS is not supported by the browser");
+
+                                      }
+
+                                      //event handlers
+                                      xhr.onload = function() {
+                                             var responseText = xhr.responseText;
+                                             logResponse("CORS-Test", responseText);
+                                             // process the response.
+
+											 // dump the response headers
+											 dumpHeaders(xhr);
+                                      };
+
+                                      xhr.onabort = function(XMLHttpRequestProgressEvent) {
+                                          logResponse("CORS-Test-Abort", XMLHttpRequestProgressEvent, true);
+                                      };
+
+                                     xhr.onerror = function(XMLHttpRequestProgressEvent) {
+                                          logResponse("CORS-Test-Error", XMLHttpRequestProgressEvent, true);
+                                      };
+
+                                      xhr.send();
+                            }
+                            catch(e){
+                               logResponse("Exception", e);
+                            }
+                    });//$.each
+               });
+                //-------------------------- image --------------------------------//
+                $("#imageTest").on("click", function(){
+                        var arrUrls = getUrls();
+                        $.each(arrUrls, function(index, url){
+                            try{
+                                   var img = new Image();
+                                   img.onload = function (event) {
+                                        logResponse("Image Test-Loaded", event, true);
+                                       	dumpImgInfo(this);
+                                   };
+                                   img.onerror = function (event) {
+                                        logResponse("Image Test-Err", event, true);
+                                       	dumpImgInfo(this);
+                                    };
+                                   //img.src = url + '/onethatdoesnotexist.gif';
+                                   img.src = url + '/favicon.ico';
+                            }
+                            catch(e){
+                               logResponse("Exception", e);
+                            }
+                        });
+               });
+               //--------------------------- iframe ------------------------------------------//
+              $("#iframeTest").on("click", function(){
+                        var arrUrls = getUrls();
+
+
+                        $.each(arrUrls, function(index, url){
+                            try{
+                                var link = url, id = new Date().getTime();
+                                var iframe = document.createElement('iframe');
+                                    iframe.id=id;
+                                    iframe.setAttribute("src", link);
+                                    document.body.appendChild(iframe);
+                                   iframe.onload = function () {
+                                   		try {
+	                                        var resp = $("#" + id).contents()[0].body.innerHTML;
+	                                        logResponse("iFrame-Test-Loaded", resp);
+	                                        //$("#" + id).remove();
+										}
+										catch(e) {
+	                                        logResponse("iFrame-Exception", e);
+										}
+										finally {
+	                                        dumpIframeInfo(iframe);
+	                                    }
+                                    };
+                                   iframe.onerror = function () {
+                                        logResponse("iFrame-Error", "Error!!!");
+                                        dumpIframeInfo(iframe);
+                                   }
+                            }
+                            catch(e){
+                               logResponse("Exception", e);
+                            }
+                        });
+               });
+                //-------------------------- window.postMessage --------------------------------//
+
+                //-------------------------- MessageChannel--------------------------------//
+
+                //---------------------------- helpers ------------------------------------//
+                $("#clearResults").on("click", function (){
+                    $("#response").empty();
+                    $("iframe").remove()
+                });
+
+                function getUrls(){
+                    var arrUrls = $("#urllist").val().split(",");
+                    return arrUrls;
+                }
+                function logResponse(hdr, msg, isObject){
+                    var msgTxt = msg;
+                    if(isObject){
+                        msgTxt = "";
+                        $.each(msg, function(key, val){
+                            msgTxt += key + "=" + val + "|";
+                        });
+                    }
+                    $("#response").append("<div class='results-row'><b><u>" + hdr + "</u></b><br>" + msgTxt + "</div>");
+                }
+                function objToString (obj) {
+                    var str = '';
+                    for (var p in obj) {
+                        if (obj.hasOwnProperty(p)) {
+                            str += p + '::' + obj[p] + '\n';
+                        }
+                    }
+                    return str;
+                }
+
+                function parseAjaxResp(resp){
+                      var msg = "";
+                        msg += "|readyState:" + resp.readyState;
+                        //msg += "|responseText:" + resp.responseText;
+                        msg += "|status:" + resp.status;
+                        msg += "|statusText:" + resp.statusText;
+                        //msg += "|timeout:" + resp.timeout;
+                        return msg;
+                }
+
+                function clearResults(){
+                    $("#response").empty();
+                    $("iframe").remove()
+                }
+
+                function dumpHeaders(xhr)
+                {
+	                 if (xhr.getAllResponseHeaders) {
+	                 	var hdrs = xhr.getAllResponseHeaders();
+	                 	hdrs = hdrs.split('\r\n');
+	                 	var hdrCount = 0;
+	                 	for (var k = 0; k < hdrs.length; k++) {
+	                 		if (hdrs[k].trim().length == 0) {
+	                 			continue;
+	                 		}
+	                 		hdrCount++;
+	                 	}
+	                 	if (hdrCount > 0) {
+	                 		logResponse("Response Header(s)", hdrs.join('<br>'));
+	                 	}
+	                 	else {
+	                 		logResponse("Response Header(s)", 'No visible response header found');
+	                 	}
+	                 }
+                }
+
+                function dumpImgInfo(elem)
+                {
+                	// reference to document object
+                	var d = elem.ownerDocument;
+                	// reference to window object
+					var win = d.defaultView || d.parentWindow;
+					// reference to navigator object
+                	var nav = win.navigator;
+                	
+                	var infoArr = [];
+                	infoArr.push('Image Source = ' + elem.src);
+                	infoArr.push('Owner Document Domain = ' + d.domain);
+                	infoArr.push('Owner Document Referrer = ' + d.referrer);
+
+                	infoArr.push('User Agent = ' + nav.userAgent);
+                	infoArr.push('Browser = ' + nav.appName + ' ' + nav.appVersion);
+                	
+             		logResponse("IMG Owner Document Info", infoArr.join('<br>'));
+                }
+
+                function dumpIframeInfo(elem)
+                {
+                	// reference to document object
+                	var d = elem.ownerDocument;
+                	// reference to window object
+					var win = d.defaultView || d.parentWindow;
+					// reference to navigator object
+                	var nav = win.navigator;
+                	
+                	var infoArr = [];
+                	infoArr.push('Owner Document Domain = ' + d.domain);
+                	infoArr.push('Owner Document Referrer = ' + d.referrer);
+
+                	infoArr.push('User Agent = ' + nav.userAgent);
+                	infoArr.push('Browser = ' + nav.appName + ' ' + nav.appVersion);
+
+             		logResponse("IFrame Owner Document Info", infoArr.join('<br>'));
+                }
+    });//on ready
+    </script>
+</head>
+<body>
+
+<div id="main">
+
+        <label>Paste URL below:</label>
+        <textarea class="panel panel-default" id="urllist" style="width:100%;height:100px;"></textarea>
+
+        <div class="panel panel-default" id="toolbar" style="border-width: 0px; margin: 10px;">
+            Test using:&nbsp;
+            <button class="btn btn-primary" id="JSONPTest">JSONP</button>
+            <button class="btn btn-primary"  id="ajaxTest">Ajax</button>
+            <button class="btn btn-primary"  id="CORSTest">CORS</button>
+            <button class="btn btn-primary"  id="imageTest">Image Download</button>
+            <button class="btn btn-primary"  id="iframeTest">iFrame</button>
+
+            <button class="btn btn-danger" id="clearResults">Clear Results</button>
+        </div>
+
+        <div class="panel panel-default" id="response"></div>
+
+
+</div>
+
+</body>
+</html>
