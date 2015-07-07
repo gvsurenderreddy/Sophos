@@ -13,8 +13,8 @@ Ext.define('SAT.view.main.MainController', {
     ],
 
     config: {
-        stores: ['main.SpeedTestStore', 'main.OffensiveContentStore', 'main.MalwareStore',
-                    'main.AdwareStore', 'main.PhishingStore', 'main.FilterAvoidStore', 'main.SSLStore']
+        stores: ['SpeedTestStore', 'OffensiveContentStore', 'MalwareStore',
+                    'AdwareStore', 'PhishingStore', 'FilterAvoidStore', 'SSLStore']
     },
 
     alias: 'controller.main',
@@ -48,7 +48,7 @@ Ext.define('SAT.view.main.MainController', {
     },
 
     rerunChart: function(t, o, index, item) {
-        var chart = Ext.ComponentQuery.query('[xtype=polar]')[index];
+        var chart = Ext.ComponentQuery.query('[itemId=polarChart]')[index];
 
         var obj = [
             {cat: 'Total global threats', data1: t},
@@ -236,17 +236,19 @@ Ext.define('SAT.view.main.MainController', {
             stores = this.getStores();
 
 
-        var chart = Ext.ComponentQuery.query('[xtype=polar]');
+        var chart = Ext.ComponentQuery.query('[itemId=polarChart]');
 
-        Ext.each(chart, function(c){
-            c.destroy();
-        });
+        if(chart && chart.length > 0) {
+            Ext.each(chart, function(c){
+                c.destroy();
+            });
+        }
         Ext.each(rows, function(r){
             var column = r.querySelectorAll('.x-grid-td')[1],
                 cell = column.querySelector('.x-grid-cell-inner');
 
             var chart = Ext.create('SAT.view.main.PolarChart', {
-                store: stores[counter]
+                store: 'main.'+stores[counter]
             });
             chart.render(cell);
             counter++;
@@ -299,7 +301,7 @@ Ext.define('SAT.view.main.MainController', {
     },
 
     updateChart: function(t, o) {
-        var chart = Ext.ComponentQuery.query('[xtype=polar]');
+        var chart = Ext.ComponentQuery.query('[itemId=polarChart]');
 
         Ext.each(chart, function(c){
             var obj = [
