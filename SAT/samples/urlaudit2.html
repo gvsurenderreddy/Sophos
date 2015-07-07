@@ -65,23 +65,39 @@ $(document).ready(function () { //jQuery on ready
         //clear results...
         $("#clearResults").trigger("click");
 
-        var list = [
-            'http://www.abc.com','http://www.peets.com', 'http://www.lasvegas.com', 'http://www.msn.com','http://www.rediff.com','http://www.gmail.com', '../data/1.json',
-            'http://www.abc.com','http://www.peets.com', 'http://www.lasvegas.com', 'http://www.msn.com','http://www.rediff.com','http://www.gmail.com', '../data/1.json',
-            'http://www.abc.com','http://www.peets.com', 'http://www.lasvegas.com', 'http://www.msn.com','http://www.rediff.com','http://www.gmail.com', '../data/1.json',
-            'http://www.abc.com','http://www.peets.com', 'http://www.lasvegas.com', 'http://www.msn.com','http://www.rediff.com','http://www.gmail.com', '../data/1.json'
-        ];
+        $.ajax({
+            url: "../data/urllist.json",
+            method: "GET",
+            dataType: "json"
+        })
+        .done(function(list) {
+           auditUrlsAndDisplayResults(list);
+        })
+        .fail(function() {
+            alert( "error" );
+        })
+        .always(function() {
+            //alert( "complete" );
+        });
+
+
+
+    });//end - url looper
+
+    //---------------------------- helpers ------------------------------------//
+    function auditUrlsAndDisplayResults(list){
         var i;
         var deferreds = [];
         var results = [];
-        var additionalUrls = getUrls();
+        var additionalUrls = eval(getUrls());
+        var gTimeout = 5000;
 
         function doAjax(url,dObject) {
             //var xdata = {json: $.toJSON({name: number}), delay: 1};
             $.ajax({
                 url:url,
                 timerStart: new Date().getTime(),
-                timeout: 5000, // sets timeout to 3 seconds
+                timeout: gTimeout,
                 type: "GET",
                 contentType: 'text/plain',
                 crossDomain: true,
@@ -100,10 +116,11 @@ $(document).ready(function () { //jQuery on ready
                 },
                 complete: function(data) {
                     data.url = this.url;
-                    data.method = 'CORS',
+                    data.method = 'CORS';
                     data.timerStart = this.timerStart;
                     data.timerEnd = new Date().getTime();
-                    data.timerDuration = (data.timerEnd - data.timerStart),
+                    data.timerDuration = (data.timerEnd - data.timerStart);
+
                     results.push(data);
                     dObject.resolve();
                     //logResponse("urlLooper", 'complete ' + this.url );
@@ -119,16 +136,18 @@ $(document).ready(function () { //jQuery on ready
 
                 $.ajax({
                     url: url,
+                    timeout: gTimeout,
                     timerStart: new Date().getTime(),
                     jsonp: "callback",
                     dataType: "jsonp",
                     // Work with the response
                     complete: function(data) {
                         data.url = this.url;
-                        data.method = 'JSONP',
+                        data.method = 'JSONP';
                         data.timerStart = this.timerStart;
                         data.timerEnd = new Date().getTime();
-                        data.timerDuration = (data.timerEnd - data.timerStart),
+                        data.timerDuration = (data.timerEnd - data.timerStart);
+
                         results.push(data);
                         dObject.resolve();
                         //logResponse("urlLooper", 'complete ' + this.url );
@@ -148,58 +167,63 @@ $(document).ready(function () { //jQuery on ready
         logResponse("Audit status", "Loading and testing " + list.length + " URLs...please wait..... <img class='clsRowSpinner' src='../resources/images/loading.gif'>");
 
         for(i = 0; i < list.length; i++) {
-            var url = list[i];//  + '?' + new Date().getTime();
+            var url = list[i].url,
+                method = list[i].method ;//  + '?' + new Date().getTime();
 
             var dObject = new $.Deferred();
             deferreds.push(dObject);
-            if($("#chkCors").is(':checked')){
-                doAjax(url,dObject);
-            }
-            if($("#chkJsonp").is(':checked')){
-                doJsonp(url,dObject);
+
+            switch(method) {
+                case "CORS":
+                    doAjax(url,dObject);
+                    break;
+                case "JSONP":
+                    doJsonp(url,dObject);
+                    break;
+                default:
+                    break;
             }
         }
 
         // check if all ajax calls have finished
         $.when.apply($, deferreds)
-         .done(function() {
-                console.log(results);
-                //remove spinner
-                //$(".clsRowSpinner").closest(".results-row").remove();
-                $("#clearResults").trigger("click");
+                .done(function() {
+                    console.log(results);
+                    //remove spinner
+                    //$(".clsRowSpinner").closest(".results-row").remove();
+                    $("#clearResults").trigger("click");
 
-                var htmlResults = "<table class='table table-striped'>";
+                    var htmlResults = "<table class='table table-striped'>";
                     htmlResults += "<tr class='tblHeader'><td>URL</td><td>Method</td><td>Duration (ms)</td><td>XHR Response</td><td>XHR Headers</td></tr>";
-                //sort by method - CORS, JSONP etc
-                results = _.sortBy(results, 'method');
-                $.each(results, function(index, resp){
-                    htmlResults += "<tr><td>" + resp.url +"</td>" +
-                                        "<td>" + (resp.method) + "</td>" +
-                                        "<td>" + (resp.timerDuration) + "</td>" +
-                                        "<td>" + parseAjaxResp(resp) + "</td>" +
-                                        "<td>" + dumpHeaders(resp) + "</td>" +
-                                    "</tr>";
-                });
-                htmlResults += "</table>";
-                try{
-                    //Display Final results
-                    logResponse("URL Audit Results:" ,  htmlResults);
+                    //sort by method - CORS, JSONP etc
+                    results = _.sortBy(results, 'method');
+                    $.each(results, function(index, resp){
+                        htmlResults += "<tr><td>" + resp.url +"</td>" +
+                                "<td>" + (resp.method) + "</td>" +
+                                "<td>" + (resp.timerDuration) + "</td>" +
+                                "<td>" + parseAjaxResp(resp) + "</td>" +
+                                "<td>" + dumpHeaders(resp) + "</td>" +
+                                "</tr>";
+                    });
+                    htmlResults += "</table>";
+                    try{
+                        //Display Final results
+                        logResponse("URL Audit Results:" ,  htmlResults);
 
-                }catch(e){
-                    //to handle HTML display errors from ajax resp HTML
-                }
-        });//end:done
+                    }catch(e){
+                        //to handle HTML display errors from ajax resp HTML
+                    }
+                });//end:done
+    }
 
-    });//end - url looper
 
-    //---------------------------- helpers ------------------------------------//
     $("#clearResults").on("click", function (){
         $("#response").empty();
         $("iframe").remove()
     });
 
     function getUrls(){
-        var arrUrls = $("#urllist").val().split(",");
+        var arrUrls = $("#urllist").val();
         return arrUrls;
     }
     function logResponse(hdr, msg, isObject){
@@ -262,44 +286,6 @@ $(document).ready(function () { //jQuery on ready
         return msg;
     }
 
-    function dumpImgInfo(elem)
-    {
-        // reference to document object
-        var d = elem.ownerDocument;
-        // reference to window object
-        var win = d.defaultView || d.parentWindow;
-        // reference to navigator object
-        var nav = win.navigator;
-
-        var infoArr = [];
-        infoArr.push('Image Source = ' + elem.src);
-        infoArr.push('Owner Document Domain = ' + d.domain);
-        infoArr.push('Owner Document Referrer = ' + d.referrer);
-
-        infoArr.push('User Agent = ' + nav.userAgent);
-        infoArr.push('Browser = ' + nav.appName + ' ' + nav.appVersion);
-
-        logResponse("IMG Owner Document Info", infoArr.join('<br>'));
-    }
-
-    function dumpIframeInfo(elem)
-    {
-        // reference to document object
-        var d = elem.ownerDocument;
-        // reference to window object
-        var win = d.defaultView || d.parentWindow;
-        // reference to navigator object
-        var nav = win.navigator;
-
-        var infoArr = [];
-        infoArr.push('Owner Document Domain = ' + d.domain);
-        infoArr.push('Owner Document Referrer = ' + d.referrer);
-
-        infoArr.push('User Agent = ' + nav.userAgent);
-        infoArr.push('Browser = ' + nav.appName + ' ' + nav.appVersion);
-
-        logResponse("IFrame Owner Document Info", infoArr.join('<br>'));
-    }
 
 
 });//on ready
@@ -309,11 +295,12 @@ $(document).ready(function () { //jQuery on ready
 
 <div id="main">
 
-    <label>Paste URLs below (comma sperated) to append to Test URLs:</label>
-    <textarea class="panel panel-default" id="urllist" style="width:100%;height:100px;"></textarea>
-    Test using:
+    <label>Append to Test URLs (maintain format):</label>
+    <textarea class="panel panel-default" id="urllist" style="width:100%;height:100px;">[{"url": "http://www.ping.com","method": "CORS"},{"url": "http://www.pong.com","method": "JSONP"}]
+    </textarea>
+<!--    Test using:
     <input id="chkCors" type="checkbox" value="CORS" checked="checked">CORS
-    <input id="chkJsonp" type="checkbox" value="JSONP">JSONP
+    <input id="chkJsonp" type="checkbox" value="JSONP">JSONP-->
 
     <div class="panel panel-default" id="toolbar" style="border-width: 0px; margin: 10px;">
         <button class="btn btn-primary"  id="urlLooper">Start URL Audit</button>

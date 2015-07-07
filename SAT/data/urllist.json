@@ -1,0 +1,26 @@
+[
+    {
+        "url": "http://www.testsite.com",
+        "method": "CORS"
+    },
+    {
+        "url": "http://www.testsite.com",
+        "method": "JSONP"
+    },
+    {
+        "url": "http://www.msn.com",
+        "method": "CORS"
+    },
+    {
+        "url": "http://www.msn.com",
+        "method": "JSONP"
+    },
+    {
+        "url": "http://www.abc.com",
+        "method": "CORS"
+    },
+    {
+        "url": "http://www.abc.com",
+        "method": "JSONP"
+    }
+]
