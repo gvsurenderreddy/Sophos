@@ -61,6 +61,8 @@ $(document).ready(function () { //jQuery on ready
     2. Include Methods: Ajax, CORS, JSONP
     3. Display Table: URL, Method, Duration, XHR Response, XHR Headers, Response HTML
     */
+    var apiPostAuditResults = "../data/analyzedresults.json"; //replace with REST URI
+
     $("#urlLooper").on("click", function urlLooper(){
         //clear results...
         $("#clearResults").trigger("click");
@@ -123,7 +125,8 @@ $(document).ready(function () { //jQuery on ready
 
                     results.push(data);
                     dObject.resolve();
-                    //logResponse("urlLooper", 'complete ' + this.url );
+
+                    updateProgressPercentage();
                 }
             });
         }
@@ -150,7 +153,8 @@ $(document).ready(function () { //jQuery on ready
 
                         results.push(data);
                         dObject.resolve();
-                        //logResponse("urlLooper", 'complete ' + this.url );
+
+                        updateProgressPercentage();
                     }
                 });//end ajax
             }
@@ -158,6 +162,14 @@ $(document).ready(function () { //jQuery on ready
                 logResponse("Exception", e);
             }
         }
+
+        function updateProgressPercentage(){
+            var totalUrls = list.length,
+                completedUrls =  results.length,
+                completedUrlsPercentage = ((completedUrls/totalUrls) * 100) ;
+            console.log("completedUrlsPercentage= " + completedUrlsPercentage);
+        }
+
 
         //add additional URLS
         if(additionalUrls.length > 0){
@@ -207,6 +219,9 @@ $(document).ready(function () { //jQuery on ready
                     });
                     htmlResults += "</table>";
                     try{
+
+                        postAuditResults(results);
+
                         //Display Final results
                         logResponse("URL Audit Results:" ,  htmlResults);
 
@@ -216,6 +231,25 @@ $(document).ready(function () { //jQuery on ready
                 });//end:done
     }
 
+    function postAuditResults(results){
+        $.ajax({
+            url: apiPostAuditResults,
+            method: "POST",
+            data: results
+        })
+                .done(function(data) {
+                    //this is where server analysed data/reports are returned
+                    //update view and display reports
+                    //displayAnalysedReoprts(data);
+                    console.log(data);
+                })
+                .fail(function() {
+                    //alert( "error" );
+                })
+                .always(function() {
+                    //alert( "complete" );
+                });
+    }
 
     $("#clearResults").on("click", function (){
         $("#response").empty();
