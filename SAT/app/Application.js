@@ -10,7 +10,13 @@ Ext.define('SAT.Application', {
 
     stores: [
         'main.MainStore',
-        'main.ChartStore'
+        'main.AdwareStore',
+        'main.FilterAvoidStore',
+        'main.MalwareStore',
+        'main.OffensiveContentStore',
+        'main.PhishingStore',
+        'main.SpeedTestStore',
+        'main.SSLStore'
     ],
 
     models: [

@@ -45,7 +45,7 @@
 
     .x-grid-cell-special {
         visibility: hidden;
-     }
+    }
 
     .x-grid-item-selected {
       background-color: #ffffff;
@@ -72,9 +72,14 @@
 
     .x-grid-with-row-lines .x-grid-item:first-child {
       border-top-width: 0px;
+      margin-bottom: -4px;
     }
     .x-grid-with-row-lines .x-grid-item:last-child {
       border-bottom-width: 0px;
       margin-bottom: 5px;
+    }
+
+    .x-draw-container {
+      top: -9px;
     }
 }

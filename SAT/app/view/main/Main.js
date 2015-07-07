@@ -196,10 +196,6 @@ Ext.define('SAT.view.main.Main', {
                 columns: [
                     {
                         dataIndex: 'polarData',
-                        xtype: 'widgetcolumn',
-                        widget: {
-                            xtype: 'polarchart'
-                        },
                         width: 120
                     },
                     {
@@ -207,7 +203,8 @@ Ext.define('SAT.view.main.Main', {
                         renderer: 'renderGridResultsContent',
                         itemId: 'gridContent',
                         width: 640
-                    }]
+                    }
+                ]
             },
             {
                 xtype: 'button',
