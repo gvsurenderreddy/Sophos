@@ -166,21 +166,21 @@ Ext.define('SAT.view.main.MainController', {
                     "<table class='stats>" +
                         "<tr class='stats-row'>" +
                             "<td class='ping'>" +
-                                "<p style='margin-top: 5px; color: #0171B9; font-size: smaller; font-weight: 600;' class='ping-text'>Ping</p>"+
+                                "<p style='margin-top: 0px; color: #0171B9; font-size: smaller; font-weight: 600;' class='ping-text'>Ping</p>"+
                                 "<div class='ping-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>10ms</div>"+
                             "</td>"+
                             "<td class='download'>" +
-                                "<p style='margin-top: 5px; color: #0171B9; font-size: smaller; font-weight: 600;' class='download-text'>Download Speed</p>"+
+                                "<p style='margin-top: 0px; color: #0171B9; font-size: smaller; font-weight: 600;' class='download-text'>Download Speed</p>"+
                                 "<div class='download-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>45.2Mbps</div>"+
                             "</td>"+
                             "<td class='upload'>" +
-                                "<p style='margin-top: 5px; color: #0171B9; font-size: smaller; font-weight: 600;' class='upload-text'>Upload Speed</p>"+
+                                "<p style='margin-top: 0px; color: #0171B9; font-size: smaller; font-weight: 600;' class='upload-text'>Upload Speed</p>"+
                                 "<div class='upload-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>15.9Mbps</div>"+
                             "</td>"+
                             "<td style='padding-left: 10px' class='content-td'>" +
-                                "<div class='gridContent' style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left;'>{value}</div>"+
+                                "<div class='gridContent' style='margin-top:-12px; white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left;'>{value}</div>"+
                                 "<a href='#details' style='float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
-                                "<input type='button' class='rerun' value='Rerun Test' style='margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
+                                "<input type='button' class='rerun' value='Rerun Test' style='margin-top:-2px; margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
                             "</td>"+
                         "</tr>"+
                     "</table>"+
@@ -200,15 +200,16 @@ Ext.define('SAT.view.main.MainController', {
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
-                    "<div class='mid-div'>"+
+                    "<div class='content-div'>"+
                         "<div class='gridContent' style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left'>{value}</div>"+
+                        "<div class='buttons-div'>"+
+                            "<a href='#details' style='margin-top:5px; float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
+                            "<input type='button' class='rerun' value='Rerun Test' style='margin-top:2px; margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
+                        "</div>"+
                     "</div>"+
 
-                    "<br><br>"+
-                    "<div class='bottom-div' style='margin-top: 25px;'>"+
-                        "<a href='#details' style='float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
-                        "<input type='button' class='rerun' value='Rerun Test' style='margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
-                    "</div>"+
+                    //"<br>"+
+
                 "</div>");
             var html = tpl.apply(data);
             return html;
@@ -263,6 +264,14 @@ Ext.define('SAT.view.main.MainController', {
 
         initGrid.hide();
         resultsGrid.show();
+
+        var rows = Ext.query('.results-grid .x-grid-row');
+
+        Ext.each(rows, function(r){
+            var column = r.querySelectorAll('.x-grid-td')[1],
+                chartColumn = column.querySelector('.x-grid-cell-inner');
+            chartColumn.style.setProperty('height', '85px');
+        });
 
         this.renderGridChart();
 
@@ -319,7 +328,7 @@ Ext.define('SAT.view.main.MainController', {
                 fontSize: 12,
                 color: '#2ac8ef',
                 x: t===100 ? 30 : 35,
-                y: 48
+                y: 43
             });
         });
 

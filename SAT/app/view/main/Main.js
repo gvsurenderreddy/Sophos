@@ -132,10 +132,11 @@ Ext.define('SAT.view.main.Main', {
                 itemId: 'init-grid',
                 store: 'main.MainStore',
                 cls: 'init-grid',
+                scrollable: false,
                 style: {
                   'border-width':'12px'
                 },
-                border: true,
+                border: false,
                 margin: '10 0 0 0',
                 width: 800,
                 viewConfig: {
@@ -175,7 +176,8 @@ Ext.define('SAT.view.main.Main', {
                 itemId: 'results-grid',
                 cls: 'results-grid',
                 store: 'main.MainStore',
-                border: true,
+                scrollable: false,
+                border: false,
                 hidden: true,
                 margin: '10 0 0 0',
                 width: 800,
@@ -196,7 +198,7 @@ Ext.define('SAT.view.main.Main', {
                 columns: [
                     {
                         dataIndex: 'polarData',
-                        width: 120
+                        width: 100
                     },
                     {
                         dataIndex: 'gridContent',
@@ -209,7 +211,7 @@ Ext.define('SAT.view.main.Main', {
             {
                 xtype: 'button',
                 text: 'Start Audit',
-                margin: '20 0 0 0',
+                margin: '12 0 0 0',
                 cls: 'start-button',
                 handler: "onClickStartAudit",
                 style: {
