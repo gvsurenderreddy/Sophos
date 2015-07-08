@@ -65,7 +65,7 @@ Ext.define('SAT.view.main.MainController', {
             fontSize: 12,
             color: '#2ac8ef',
             x: t===100 ? 30 : 35,
-            y: 48
+            y: 43
         });
 
         if(t === 100) {
@@ -166,15 +166,15 @@ Ext.define('SAT.view.main.MainController', {
                     "<table class='stats>" +
                         "<tr class='stats-row'>" +
                             "<td class='ping'>" +
-                                "<p style='margin-top: 0px; color: #0171B9; font-size: smaller; font-weight: 600;' class='ping-text'>Ping</p>"+
+                                "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='ping-text'>Ping</p>"+
                                 "<div class='ping-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>10ms</div>"+
                             "</td>"+
                             "<td class='download'>" +
-                                "<p style='margin-top: 0px; color: #0171B9; font-size: smaller; font-weight: 600;' class='download-text'>Download Speed</p>"+
+                                "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='download-text'>Download Speed</p>"+
                                 "<div class='download-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>45.2Mbps</div>"+
                             "</td>"+
                             "<td class='upload'>" +
-                                "<p style='margin-top: 0px; color: #0171B9; font-size: smaller; font-weight: 600;' class='upload-text'>Upload Speed</p>"+
+                                "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='upload-text'>Upload Speed</p>"+
                                 "<div class='upload-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>15.9Mbps</div>"+
                             "</td>"+
                             "<td style='padding-left: 10px' class='content-td'>" +
