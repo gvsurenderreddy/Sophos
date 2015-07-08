@@ -43,6 +43,10 @@ Ext.define('SAT.view.main.MainController', {
                     clearInterval(f);
                 }
                 me.rerunChart(timesRun, 100-timesRun, index , item);
+                if(index === 0) {
+                    me.updateStats(Math.round((Math.random()) * 20), 'upload');
+                    me.updateStats(Math.round((Math.random()) * 20), 'download');
+                }
             }, 1000);
         }
     },
@@ -275,24 +279,6 @@ Ext.define('SAT.view.main.MainController', {
 
         this.renderGridChart();
 
-        var counter = 0;
-        var u = setInterval(function(){
-            counter += 10;
-            if(counter === 50){
-                clearInterval(u);
-            }
-            me.updateStats(Math.round((Math.random()) * 20), 'upload');
-        },1000);
-
-        var c = 0;
-        var d = setInterval(function(){
-            c += 10;
-            if(c === 50){
-                clearInterval(d);
-            }
-            me.updateStats(Math.round((Math.random()) * 20), 'download');
-        },1000);
-
         var timesRun = 0;
         var f = setInterval(function(){
             timesRun += 20;
@@ -300,6 +286,8 @@ Ext.define('SAT.view.main.MainController', {
                 clearInterval(f);
             }
             me.updateChart(timesRun, 100-timesRun);
+            me.updateStats(Math.round((Math.random()) * 20), 'upload');
+            me.updateStats(Math.round((Math.random()) * 20), 'download');
         }, 1000);
 
         var buttons = Ext.ComponentQuery.query('[cls=start-button]');
