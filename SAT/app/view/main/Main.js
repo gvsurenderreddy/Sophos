@@ -183,7 +183,7 @@ Ext.define('SAT.view.main.Main', {
                 hidden: true,
                 margin: '10 0 0 0',
                 width: 800,
-                height: 590,
+                height: 600,
                 viewConfig: {
                     listeners: {
                         itemclick: 'onThreatClick',
