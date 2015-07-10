@@ -133,12 +133,14 @@ Ext.define('SAT.view.main.Main', {
                 store: 'main.MainStore',
                 cls: 'init-grid',
                 scrollable: false,
+                hidden: false,
                 style: {
                   'border-width':'12px'
                 },
                 border: false,
                 margin: '10 0 0 0',
                 width: 800,
+                height: 540,
                 viewConfig: {
                     listeners: {
                         itemclick: 'onThreatClick',
@@ -181,6 +183,7 @@ Ext.define('SAT.view.main.Main', {
                 hidden: true,
                 margin: '10 0 0 0',
                 width: 800,
+                height: 590,
                 viewConfig: {
                     listeners: {
                         itemclick: 'onThreatClick',

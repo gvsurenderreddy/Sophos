@@ -6,8 +6,8 @@ Ext.define('SAT.store.main.SSLStore', {
     fields: ['os', 'data1'],
 
     data: [
-        {cat: 'Total global threats', data1: 18},
-        {cat: 'Other threats', data1: 82}
+        {cat: 'Total global threats', data1: 1},
+        {cat: 'Other threats', data1: 99}
     ],
     proxy: {
         type: 'memory',

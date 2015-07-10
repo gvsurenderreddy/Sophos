@@ -163,7 +163,7 @@ Ext.define('SAT.view.main.MainController', {
                         "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -2px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
@@ -200,7 +200,7 @@ Ext.define('SAT.view.main.MainController', {
                         "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -2px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
@@ -274,7 +274,7 @@ Ext.define('SAT.view.main.MainController', {
         Ext.each(rows, function(r){
             var column = r.querySelectorAll('.x-grid-td')[1],
                 chartColumn = column.querySelector('.x-grid-cell-inner');
-            chartColumn.style.setProperty('height', '85px');
+            chartColumn.style.setProperty('height', '82px');
         });
 
         this.renderGridChart();
@@ -285,52 +285,88 @@ Ext.define('SAT.view.main.MainController', {
             if(timesRun === 100){
                 clearInterval(f);
             }
-            me.updateChart(timesRun, 100-timesRun);
             me.updateStats(Math.round((Math.random()) * 20), 'upload');
             me.updateStats(Math.round((Math.random()) * 20), 'download');
         }, 1000);
 
-        var buttons = Ext.ComponentQuery.query('[cls=start-button]');
-        Ext.each(buttons, function(b){
-            b.setText('View Full Results');
-            b.getEl().setStyle('padding', '10px 2px');
+        this.executePromise(0).then(function() {
+            me.updateButtons(0);
+            return me.executePromise(1);
+        }).then(function() {
+            me.updateButtons(1);
+            return me.executePromise(2);
+        }).then(function() {
+            me.updateButtons(2);
+            return me.executePromise(3);
+        }).then(function() {
+            me.updateButtons(3);
+            return me.executePromise(4);
+        }).then(function() {
+            me.updateButtons(4);
+            return me.executePromise(5);
+        }).then(function() {
+            me.updateButtons(5);
+            return me.executePromise(6);
+        }).then(function(){
+            me.updateButtons(6);
         });
+
     },
 
-    updateChart: function(t, o) {
-        var chart = Ext.ComponentQuery.query('[itemId=polarChart]');
-
-        Ext.each(chart, function(c){
-            var obj = [
-                {cat: 'Total global threats', data1: t},
-                {cat: 'Other threats', data1: o}
-            ];
-            c.store.loadRawData(obj);
-            c.redraw();
-            var centerTxtVal = c.store.data.items[0].data.data1 + "%",
-                sprite = c.getSurface();
-            sprite.removeAll(true);
-            sprite.add({
-                type: 'text',
-                text: centerTxtVal,
-                fontSize: 12,
-                color: '#2ac8ef',
-                x: t===100 ? 30 : 35,
-                y: 43
-            });
+    executePromise: function(index) {
+        var me = this;
+        var promise = new Promise(function(resolve, reject) {
+            var timesRun = 0;
+            var f = setInterval(function(){
+                timesRun += 20;
+                if(timesRun === 100){
+                    clearInterval(f);
+                    resolve("Stuff worked!");
+                }
+                me.updateChart(timesRun, 100-timesRun, index);
+            }, 1000);
         });
 
-        if(t === 100) {
-            var results = Ext.select('.result-pass').elements;
-            Ext.each(results, function(r){
-                r.style.setProperty('display', 'block');
-            });
+        return promise;
+    },
 
-            var reruns = Ext.select('.rerun').elements;
-            Ext.each(reruns, function(r){
-                r.style.setProperty('display', 'block');
+    updateButtons: function(index) {
+        var results = Ext.select('.result-pass').elements[index];
+        results.style.setProperty('display', 'block');
+
+        var reruns = Ext.select('.rerun').elements[index];
+        reruns.style.setProperty('display', 'block');
+
+        if(index === 6) {
+            var btn = Ext.ComponentQuery.query('[cls=start-button]');
+            Ext.each(btn, function(b){
+                b.setText('View Full Results');
+                b.getEl().setStyle('padding', '10px 2px');
             });
         }
+    },
+
+    updateChart: function(t, o, index) {
+        var chart = Ext.ComponentQuery.query('[itemId=polarChart]')[index];
+
+        var obj = [
+            {cat: 'Total global threats', data1: t},
+            {cat: 'Other threats', data1: o}
+        ];
+        chart.store.loadRawData(obj);
+        chart.redraw();
+        var centerTxtVal = chart.store.data.items[0].data.data1 + "%",
+            sprite = chart.getSurface();
+        sprite.removeAll(true);
+        sprite.add({
+            type: 'text',
+            text: centerTxtVal,
+            fontSize: 12,
+            color: '#2ac8ef',
+            x: t===100 ? 30 : 35,
+            y: 43
+        });
+
     },
 
     updateStats: function(val, testMode){
