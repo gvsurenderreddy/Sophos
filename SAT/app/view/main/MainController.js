@@ -29,52 +29,13 @@ Ext.define('SAT.view.main.MainController', {
 
     onResultsItemClick: function(view, category, item, index, e) {
         var clickedEl = Ext.get(e.target),
-            value = clickedEl.getAttribute("class"),
-            storeName = this.getStores()[index], timesRun = 0, me = this;
+            value = clickedEl.getAttribute("class"), me = this;
 
         if (value === 'rerun') {
             item.querySelector('.rerun').style.setProperty('display', 'none');
             item.querySelector('.result-pass').style.setProperty('display', 'none');
 
-            var store = Ext.StoreManager.lookup(storeName);
-            var f = setInterval(function(){
-                timesRun += 20;
-                if(timesRun === 100){
-                    clearInterval(f);
-                }
-                me.rerunChart(timesRun, 100-timesRun, index , item);
-                if(index === 0) {
-                    me.updateStats(Math.round((Math.random()) * 20), 'upload');
-                    me.updateStats(Math.round((Math.random()) * 20), 'download');
-                }
-            }, 1000);
-        }
-    },
-
-    rerunChart: function(t, o, index, item) {
-        var chart = Ext.ComponentQuery.query('[itemId=polarChart]')[index];
-
-        var obj = [
-            {cat: 'Total global threats', data1: t},
-            {cat: 'Other threats', data1: o}
-        ];
-        chart.store.loadRawData(obj);
-        chart.redraw();
-        var centerTxtVal = chart.store.data.items[0].data.data1 + "%",
-            sprite = chart.getSurface();
-        sprite.removeAll(true);
-        sprite.add({
-            type: 'text',
-            text: centerTxtVal,
-            fontSize: 12,
-            color: '#2ac8ef',
-            x: t===100 ? 30 : 35,
-            y: 43
-        });
-
-        if(t === 100) {
-            item.querySelector('.rerun').style.setProperty('display', 'block');
-            item.querySelector('.result-pass').style.setProperty('display', 'block');
+            me.rerunChart(index);
         }
     },
 
@@ -160,7 +121,7 @@ Ext.define('SAT.view.main.MainController', {
             var tpl = new Ext.XTemplate(
                 "<div class='gridContent'>" +
                     "<div class='top-div'>"+
-                        "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{smallImage}'></div>" +
+                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
                         "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -2px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
@@ -175,16 +136,18 @@ Ext.define('SAT.view.main.MainController', {
                             "</td>"+
                             "<td class='download'>" +
                                 "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='download-text'>Download Speed</p>"+
-                                "<div class='download-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>45.2Mbps</div>"+
+                                "<div class='download-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>0 Mbps</div>"+
                             "</td>"+
                             "<td class='upload'>" +
                                 "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='upload-text'>Upload Speed</p>"+
-                                "<div class='upload-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>15.9Mbps</div>"+
+                                "<div class='upload-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>0 Mbps</div>"+
                             "</td>"+
                             "<td style='padding-left: 10px' class='content-td'>" +
                                 "<div class='gridContent' style='margin-top:-12px; white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left;'>{value}</div>"+
-                                "<a href='#details' style='float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
-                                "<input type='button' class='rerun' value='Rerun Test' style='margin-top:-2px; margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
+                                "<div class='buttons-div' style='display: none'>"+
+                                    "<a href='#details' class='view-details' style='float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
+                                    "<input type='button' class='rerun' value='Rerun Test' style='margin-top:-2px; margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px;'>"+
+                                "</div>"+
                             "</td>"+
                         "</tr>"+
                     "</table>"+
@@ -197,7 +160,7 @@ Ext.define('SAT.view.main.MainController', {
             var tpl = new Ext.XTemplate(
                 "<div class='gridContent'>" +
                     "<div class='top-div'>"+
-                        "<div class='gridSmallIcon' style='float: left'><img src='resources/images/{smallImage}'></div>" +
+                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
                         "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -2px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
@@ -206,9 +169,9 @@ Ext.define('SAT.view.main.MainController', {
 
                     "<div class='content-div'>"+
                         "<div class='gridContent' style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left'>{value}</div>"+
-                        "<div class='buttons-div'>"+
-                            "<a href='#details' style='margin-top:5px; float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
-                            "<input type='button' class='rerun' value='Rerun Test' style='margin-top:2px; margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px; display: none'>"+
+                        "<div class='buttons-div' style='display: none'>"+
+                            "<a href='#details' class='view-details' style='margin-top:5px; float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
+                            "<input type='button' class='rerun' value='Rerun Test' style='margin-top:2px; margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px'>"+
                         "</div>"+
                     "</div>"+
 
@@ -240,7 +203,6 @@ Ext.define('SAT.view.main.MainController', {
         var rows = Ext.query('.results-grid .x-grid-row'), counter = 0,
             stores = this.getStores();
 
-
         var chart = Ext.ComponentQuery.query('[itemId=polarChart]');
 
         if(chart && chart.length > 0) {
@@ -263,31 +225,38 @@ Ext.define('SAT.view.main.MainController', {
     onClickStartAudit: function(a, b) {
         var view = this.getView(),
             me = this,
-            initGrid = view.down('[itemId=init-grid]'),
-            resultsGrid = view.down('[itemId=results-grid]');
+            resultsGrid = view.down('[itemId=results-grid]'),
+            checkbox = resultsGrid.down('[xtype=widgetcolumn]'),
+            gridIcons = resultsGrid.down('[itemId=resultGridIcons]'),
+            chart = resultsGrid.down('[dataIndex=polarData]');
 
-        initGrid.hide();
-        resultsGrid.show();
+//        var grid = Ext.query('.sat-main-view .results-grid')[0];
+//        grid.style.setProperty('height', '640px');
+
+        resultsGrid.setHeight(640);
+        Ext.each(checkbox, function(c){
+            c.hide();
+        });
+
+        gridIcons.hide();
+        chart.show();
+
+        var smallIcons = Ext.query('.gridSmallIcon');
+        Ext.each(smallIcons, function(i){
+            i.style.setProperty('display', 'block');
+        });
 
         var rows = Ext.query('.results-grid .x-grid-row');
-
         Ext.each(rows, function(r){
             var column = r.querySelectorAll('.x-grid-td')[1],
                 chartColumn = column.querySelector('.x-grid-cell-inner');
             chartColumn.style.setProperty('height', '82px');
         });
 
-        this.renderGridChart();
+        var grid = Ext.query('.sat-main-view .results-grid .x-grid-item-container')[0];
+        grid.style.setProperty('padding-left', '30px');
 
-        var timesRun = 0;
-        var f = setInterval(function(){
-            timesRun += 20;
-            if(timesRun === 100){
-                clearInterval(f);
-            }
-            me.updateStats(Math.round((Math.random()) * 20), 'upload');
-            me.updateStats(Math.round((Math.random()) * 20), 'download');
-        }, 1000);
+        this.renderGridChart();
 
         this.executePromise(0).then(function() {
             me.updateButtons(0);
@@ -313,6 +282,22 @@ Ext.define('SAT.view.main.MainController', {
 
     },
 
+    rerunChart: function(index) {
+        var me = this;
+        this.executePromise(index).then(function() {
+            me.updateRerunButtons(index);
+        });
+    },
+
+
+    updateRerunButtons: function(index) {
+        var results = Ext.select('.result-pass').elements[index];
+        results.style.setProperty('display', 'block');
+
+        var reruns = Ext.select('.rerun').elements[index];
+        reruns.style.setProperty('display', 'block');
+    },
+
     executePromise: function(index) {
         var me = this;
         var promise = new Promise(function(resolve, reject) {
@@ -322,6 +307,10 @@ Ext.define('SAT.view.main.MainController', {
                 if(timesRun === 100){
                     clearInterval(f);
                     resolve("Stuff worked!");
+                }
+                if(index === 0) {
+                    me.updateStats(Math.round((Math.random()) * 20), 'upload');
+                    me.updateStats(Math.round((Math.random()) * 20), 'download');
                 }
                 me.updateChart(timesRun, 100-timesRun, index);
             }, 1000);
@@ -334,8 +323,13 @@ Ext.define('SAT.view.main.MainController', {
         var results = Ext.select('.result-pass').elements[index];
         results.style.setProperty('display', 'block');
 
-        var reruns = Ext.select('.rerun').elements[index];
-        reruns.style.setProperty('display', 'block');
+        var buttons = Ext.select('.buttons-div').elements[index];
+        Ext.each(buttons, function(b){
+            buttons.style.setProperty('display', 'block');
+        });
+
+//        var reruns = Ext.select('.rerun').elements[index];
+//        reruns.style.setProperty('display', 'block');
 
         if(index === 6) {
             var btn = Ext.ComponentQuery.query('[cls=start-button]');

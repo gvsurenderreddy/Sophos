@@ -40,7 +40,7 @@ Ext.define('SAT.view.main.Main', {
         margin: '0 0 20 0',
         x: 20,
         y: 12,
-        width: 800,
+        width: 830,
         title: '&nbsp;',
         items: [
             {
@@ -91,7 +91,7 @@ Ext.define('SAT.view.main.Main', {
             {
                 xtype: 'fieldcontainer',
                 layout: 'hbox',
-                width: 800,
+                width: 825,
                 margin: '0 0 0 5',
                 items: [{
                     xtype: 'component',
@@ -127,52 +127,52 @@ Ext.define('SAT.view.main.Main', {
                     'font-weight': 500
                 }
             },
-            {
-                xtype: 'grid',
-                itemId: 'init-grid',
-                store: 'main.MainStore',
-                cls: 'init-grid',
-                scrollable: false,
-                hidden: false,
-                style: {
-                  'border-width':'12px'
-                },
-                border: false,
-                margin: '10 0 0 0',
-                width: 800,
-                height: 540,
-                viewConfig: {
-                    listeners: {
-                        itemclick: 'onThreatClick',
-                        expandbody: 'onThreatExpandBody',
-                        collapsebody: 'onThreatCollapseBody'
-                    }
-                },
-                hideHeaders: true,
-                columns: [
-                    {
-                        dataIndex: 'active',
-                        xtype: 'widgetcolumn',
-                        widget: {
-                            xtype: 'checkbox',
-                            handler: 'handleCheckBoxSelection',
-                            name: 'chkAudit'
-                        },
-                        width: 30
-                    },
-                    {
-                        dataIndex: 'gridIcon',
-                        renderer: 'renderGridIcons',
-                        itemId: 'gridIcons',
-                        width: 100
-                    },
-                    {
-                        dataIndex: 'gridContent',
-                        renderer: 'renderGridContent',
-                        itemId: 'gridContent',
-                        width: 620
-                }]
-            },
+//            {
+//                xtype: 'grid',
+//                itemId: 'init-grid',
+//                store: 'main.MainStore',
+//                cls: 'init-grid',
+//                scrollable: false,
+//                hidden: true,
+//                style: {
+//                  'border-width':'12px'
+//                },
+//                border: false,
+//                margin: '10 0 0 0',
+//                width: 800,
+//                height: 540,
+//                viewConfig: {
+//                    listeners: {
+//                        itemclick: 'onThreatClick',
+//                        expandbody: 'onThreatExpandBody',
+//                        collapsebody: 'onThreatCollapseBody'
+//                    }
+//                },
+//                hideHeaders: true,
+//                columns: [
+//                    {
+//                        dataIndex: 'active',
+//                        xtype: 'widgetcolumn',
+//                        widget: {
+//                            xtype: 'checkbox',
+//                            handler: 'handleCheckBoxSelection',
+//                            name: 'chkAudit'
+//                        },
+//                        width: 30
+//                    },
+//                    {
+//                        dataIndex: 'gridIcon',
+//                        renderer: 'renderGridIcons',
+//                        itemId: 'gridIcons',
+//                        width: 100
+//                    },
+//                    {
+//                        dataIndex: 'gridContent',
+//                        renderer: 'renderGridContent',
+//                        itemId: 'gridContent',
+//                        width: 620
+//                }]
+//            },
             {
                 xtype: 'grid',
                 itemId: 'results-grid',
@@ -180,9 +180,9 @@ Ext.define('SAT.view.main.Main', {
                 store: 'main.MainStore',
                 scrollable: false,
                 border: false,
-                hidden: true,
+                hidden: false,
                 margin: '10 0 0 0',
-                width: 800,
+                width: 825,
                 height: 600,
                 viewConfig: {
                     listeners: {
@@ -200,8 +200,25 @@ Ext.define('SAT.view.main.Main', {
                 }],
                 columns: [
                     {
-                        dataIndex: 'polarData',
+                        dataIndex: 'active',
+                        xtype: 'widgetcolumn',
+                        widget: {
+                            xtype: 'checkbox',
+                            handler: 'handleCheckBoxSelection',
+                            name: 'chkAudit'
+                        },
+                        width: 30
+                    },
+                    {
+                        dataIndex: 'gridIcon',
+                        renderer: 'renderGridIcons',
+                        itemId: 'resultGridIcons',
                         width: 100
+                    },
+                    {
+                        dataIndex: 'polarData',
+                        width: 100,
+                        hidden: true
                     },
                     {
                         dataIndex: 'gridContent',

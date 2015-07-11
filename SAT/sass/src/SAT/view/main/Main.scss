@@ -55,12 +55,11 @@
       background-color: #ffffff;
     }
 
-    .init-grid .x-grid-item-container {
-      padding-left: 25px;
+    .results-grid .x-grid-with-row-lines .x-grid-item {
+      margin-bottom: 5px;
     }
-
     .results-grid .x-grid-item-container {
-      padding-left: 18px;
+      padding-left: 10px;
     }
 
     .x-grid-view {
@@ -76,12 +75,8 @@
 
     .results-grid .x-grid-with-row-lines .x-grid-item:last-child {
       border-bottom-width: 0px;
-      margin-bottom: -2px;
     }
 
-    .init-grid .x-grid-with-row-lines .x-grid-item:last-child {
-      border-bottom-width: 0px;
-    }
     .x-draw-container {
       top: -18px;
       left: -5px;
