@@ -62,18 +62,87 @@ $(document).ready(function () { //jQuery on ready
     3. Display Table: URL, Method, Duration, XHR Response, XHR Headers, Response HTML
     */
     var apiPostAuditResults = "../data/analyzedresults.json"; //replace with REST URI
+    var apiUriBot = "../data/urllist.json"; //replace with REST URI
+    var apiUriSsl = "../data/urllistssl.json"; //replace with REST URI
+    var deferreds = [];
+    var results = [];
+    var gTimeout = 5000;
 
-    $("#urlLooper").on("click", function urlLooper(){
-        //clear results...
-        $("#clearResults").trigger("click");
+    //---------------------------- Bots ------------------------------------//
+    $("#bottest").on("click", function (){
+        function successCallbackBot(){
+            var htmlResults = "<table class='table table-striped'>";
+            htmlResults += "<tr class='tblHeader'><td>URL</td><td>Method</td><td>Duration (ms)</td><td>XHR Response</td><td>XHR Headers</td></tr>";
+            //sort by method - CORS, JSONP etc
+            results = _.sortBy(results, 'method');
+            $.each(results, function(index, resp){
+                htmlResults += "<tr><td>" + resp.url +"</td>" +
+                        "<td>" + (resp.method) + "</td>" +
+                        "<td>" + (resp.timerDuration) + "</td>" +
+                        "<td>" + parseAjaxResp(resp) + "</td>" +
+                        "<td>" + dumpHeaders(resp) + "</td>" +
+                        "</tr>";
+            });
+            htmlResults += "</table>";
+            try{
+
+                postAuditResults(results);
+
+                //Display Final results
+                logResponse("URL Audit Results:" ,  htmlResults);
+
+            }catch(e){
+                //to handle HTML display errors from ajax resp HTML
+            }
+        }
+
+        initAudit(apiUriBot, successCallbackBot, true);
+    });//end - url looper
+
+    //--------------------------- SSL -----------------------------------------//
+    $("#ssltest").on("click", function(){
+
+        function successCallbackSsl(){
+            var htmlResults = "<table class='table table-striped'>";
+            htmlResults += "<tr class='tblHeader'><td>URL</td><td>Method</td><td>Duration (ms)</td><td>XHR Response</td><td>XHR Headers</td></tr>";
+            //sort by method - CORS, JSONP etc
+            results = _.sortBy(results, 'method');
+            $.each(results, function(index, resp){
+                htmlResults += "<tr><td>" + resp.url +"</td>" +
+                        "<td>" + (resp.method) + "</td>" +
+                        "<td>" + (resp.timerDuration) + "</td>" +
+                        "<td>" + (resp.responseText) + "</td>" +
+                        "<td>" + dumpHeaders(resp) + "</td>" +
+                        "</tr>";
+            });
+            htmlResults += "</table>";
+
+            //Display Final results
+            logResponse("URL Audit Results:" ,  htmlResults);
+         }
+
+        initAudit(apiUriSsl, successCallbackSsl);
+    });
+
+    //----------------- Helpers ---------------------------------------------------//
+
+    function cleanUpPreviousTest(){
+        clearResults();
+        deferreds = [];
+        results = [];
+    }
+
+    function initAudit(apiUri, successCallBk, blnAppendUrls){
+        //clear previous results...
+        cleanUpPreviousTest();
 
         $.ajax({
-            url: "../data/urllist.json",
+            url: apiUri,
             method: "GET",
             dataType: "json"
         })
         .done(function(list) {
-           auditUrlsAndDisplayResults(list);
+            auditUrlsAndDisplayResults(list, successCallBk, blnAppendUrls);
         })
         .fail(function() {
             alert( "error" );
@@ -81,116 +150,34 @@ $(document).ready(function () { //jQuery on ready
         .always(function() {
             //alert( "complete" );
         });
+    }
 
+    function auditUrlsAndDisplayResults(list, successCallBk, blnAppendUrls){
 
-
-    });//end - url looper
-
-    //---------------------------- helpers ------------------------------------//
-    function auditUrlsAndDisplayResults(list){
-        var i;
-        var deferreds = [];
-        var results = [];
-        var additionalUrls = eval(getUrls());
-        var gTimeout = 5000;
-
-        function doAjax(url,dObject) {
-            //var xdata = {json: $.toJSON({name: number}), delay: 1};
-            $.ajax({
-                url:url,
-                timerStart: new Date().getTime(),
-                timeout: gTimeout,
-                type: "GET",
-                contentType: 'text/plain',
-                crossDomain: true,
-                xhrFields: {
-                    // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
-                    // This can be used to set the 'withCredentials' property.
-                    // Set the value to 'true' if you'd like to pass cookies to the server.
-                    // If this is enabled, your server must respond with the header
-                    // 'Access-Control-Allow-Credentials: true'.
-                    withCredentials: false
-                },
-                headers: {
-                    // Set any custom headers here.
-                    // If you set any non-simple headers, your server must include these
-                    // headers in the 'Access-Control-Allow-Headers' response header.
-                },
-                complete: function(data) {
-                    data.url = this.url;
-                    data.method = 'CORS';
-                    data.timerStart = this.timerStart;
-                    data.timerEnd = new Date().getTime();
-                    data.timerDuration = (data.timerEnd - data.timerStart);
-
-                    results.push(data);
-                    dObject.resolve();
-
-                    updateProgressPercentage();
-                }
-            });
-        }
-
-        function doJsonp(url,dObject){
-            try{
-                // Example URLs with JSONP support
-                // https://graph.facebook.com/?ids=http://www.stackoverflow.com
-                // https://jsonp.afeld.me/?callback=?&url=http://jsonview.com/example.json
-
-                $.ajax({
-                    url: url,
-                    timeout: gTimeout,
-                    timerStart: new Date().getTime(),
-                    jsonp: "callback",
-                    dataType: "jsonp",
-                    // Work with the response
-                    complete: function(data) {
-                        data.url = this.url;
-                        data.method = 'JSONP';
-                        data.timerStart = this.timerStart;
-                        data.timerEnd = new Date().getTime();
-                        data.timerDuration = (data.timerEnd - data.timerStart);
-
-                        results.push(data);
-                        dObject.resolve();
-
-                        updateProgressPercentage();
-                    }
-                });//end ajax
-            }
-            catch(e){
-                logResponse("Exception", e);
-            }
-        }
-
-        function updateProgressPercentage(){
-            var totalUrls = list.length,
-                completedUrls =  results.length,
-                completedUrlsPercentage = ((completedUrls/totalUrls) * 100) ;
-            console.log("completedUrlsPercentage= " + completedUrlsPercentage);
-        }
-
-
-        //add additional URLS
-        if(additionalUrls.length > 0){
-            list = list.concat(additionalUrls);
-        }
         //wait spinner .....
         logResponse("Audit status", "Loading and testing " + list.length + " URLs...please wait..... <img class='clsRowSpinner' src='../resources/images/loading.gif'>");
 
+        if(blnAppendUrls){
+            var additionalUrls = eval(getUrls());
+            //add additional URLS
+            if(additionalUrls.length > 0){
+                list = list.concat(additionalUrls);
+            }
+        }
+        var i;
         for(i = 0; i < list.length; i++) {
             var url = list[i].url,
-                method = list[i].method ;//  + '?' + new Date().getTime();
+                    method = list[i].method ;//  + '?' + new Date().getTime();
 
             var dObject = new $.Deferred();
             deferreds.push(dObject);
 
             switch(method) {
                 case "CORS":
-                    doAjax(url,dObject);
+                    doAjax(url, dObject, list);
                     break;
                 case "JSONP":
-                    doJsonp(url,dObject);
+                    doJsonp(url, dObject, list);
                     break;
                 default:
                     break;
@@ -204,56 +191,108 @@ $(document).ready(function () { //jQuery on ready
                     //remove spinner
                     //$(".clsRowSpinner").closest(".results-row").remove();
                     $("#clearResults").trigger("click");
-
-                    var htmlResults = "<table class='table table-striped'>";
-                    htmlResults += "<tr class='tblHeader'><td>URL</td><td>Method</td><td>Duration (ms)</td><td>XHR Response</td><td>XHR Headers</td></tr>";
-                    //sort by method - CORS, JSONP etc
-                    results = _.sortBy(results, 'method');
-                    $.each(results, function(index, resp){
-                        htmlResults += "<tr><td>" + resp.url +"</td>" +
-                                "<td>" + (resp.method) + "</td>" +
-                                "<td>" + (resp.timerDuration) + "</td>" +
-                                "<td>" + parseAjaxResp(resp) + "</td>" +
-                                "<td>" + dumpHeaders(resp) + "</td>" +
-                                "</tr>";
-                    });
-                    htmlResults += "</table>";
-                    try{
-
-                        postAuditResults(results);
-
-                        //Display Final results
-                        logResponse("URL Audit Results:" ,  htmlResults);
-
-                    }catch(e){
-                        //to handle HTML display errors from ajax resp HTML
-                    }
+                    successCallBk.call(this);
                 });//end:done
     }
 
-    function postAuditResults(results){
+    function doAjax(url, dObject, list) {
+        //var xdata = {json: $.toJSON({name: number}), delay: 1};
         $.ajax({
-            url: apiPostAuditResults,
-            method: "POST",
-            data: results
-        })
-                .done(function(data) {
-                    //this is where server analysed data/reports are returned
-                    //update view and display reports
-                    //displayAnalysedReoprts(data);
-                    console.log(data);
-                })
-                .fail(function() {
-                    //alert( "error" );
-                })
-                .always(function() {
-                    //alert( "complete" );
-                });
+            url:url,
+            timerStart: new Date().getTime(),
+            timeout: gTimeout,
+            type: "GET",
+            contentType: 'text/plain',
+            crossDomain: true,
+            xhrFields: {
+                // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
+                // This can be used to set the 'withCredentials' property.
+                // Set the value to 'true' if you'd like to pass cookies to the server.
+                // If this is enabled, your server must respond with the header
+                // 'Access-Control-Allow-Credentials: true'.
+                withCredentials: false
+            },
+            headers: {
+                // Set any custom headers here.
+                // If you set any non-simple headers, your server must include these
+                // headers in the 'Access-Control-Allow-Headers' response header.
+            },
+            complete: function(data) {
+                data.url = this.url;
+                data.method = 'CORS';
+                data.timerStart = this.timerStart;
+                data.timerEnd = new Date().getTime();
+                data.timerDuration = (data.timerEnd - data.timerStart);
+
+                results.push(data);
+                dObject.resolve();
+
+                updateProgressPercentage(list);
+            }
+        });
+    }
+
+    function doJsonp(url, dObject, list){
+        try{
+            // Example URLs with JSONP support
+            // https://graph.facebook.com/?ids=http://www.stackoverflow.com
+            // https://jsonp.afeld.me/?callback=?&url=http://jsonview.com/example.json
+
+            $.ajax({
+                url: url,
+                timeout: gTimeout,
+                timerStart: new Date().getTime(),
+                jsonp: "callback",
+                dataType: "jsonp",
+                // Work with the response
+                complete: function(data) {
+                    data.url = this.url;
+                    data.method = 'JSONP';
+                    data.timerStart = this.timerStart;
+                    data.timerEnd = new Date().getTime();
+                    data.timerDuration = (data.timerEnd - data.timerStart);
+
+                    results.push(data);
+                    dObject.resolve();
+
+                    updateProgressPercentage(list);
+                }
+            });//end ajax
+        }
+        catch(e){
+            logResponse("Exception", e);
+        }
+    }
+
+    function updateProgressPercentage(list){
+        var totalUrls = list.length,
+                completedUrls =  results.length,
+                completedUrlsPercentage = ((completedUrls/totalUrls) * 100) ;
+        console.log("completedUrlsPercentage= " + completedUrlsPercentage);
+    }
+
+    function postAuditResults(results){
+            $.ajax({
+                url: apiPostAuditResults,
+                method: "POST",
+                data: results
+            })
+            .done(function(data) {
+                //this is where server analysed data/reports are returned
+                //update view and display reports
+                //displayAnalysedReoprts(data);
+                console.log(data);
+            })
+            .fail(function() {
+                //alert( "error" );
+            })
+            .always(function() {
+                //alert( "complete" );
+            });
     }
 
     $("#clearResults").on("click", function (){
-        $("#response").empty();
-        $("iframe").remove()
+        clearResults();
     });
 
     function getUrls(){
@@ -269,15 +308,6 @@ $(document).ready(function () { //jQuery on ready
             });
         }
         $("#response").append("<div class='results-row'><b><u>" + hdr + "</u></b><br>" + msgTxt + "</div>");
-    }
-    function objToString (obj) {
-        var str = '';
-        for (var p in obj) {
-            if (obj.hasOwnProperty(p)) {
-                str += p + '::' + obj[p] + '\n';
-            }
-        }
-        return str;
     }
 
     function parseAjaxResp(resp){
@@ -332,12 +362,15 @@ $(document).ready(function () { //jQuery on ready
     <label>Append to Test URLs (maintain format):</label>
     <textarea class="panel panel-default" id="urllist" style="width:100%;height:100px;">[{"url": "http://www.ping.com","method": "CORS"},{"url": "http://www.pong.com","method": "JSONP"}]
     </textarea>
+
+    <!--<input type="text" id="sslurl" value="https://ec2-52-8-200-90.us-west-1.compute.amazonaws.com:10443/a/check"/>-->
 <!--    Test using:
     <input id="chkCors" type="checkbox" value="CORS" checked="checked">CORS
     <input id="chkJsonp" type="checkbox" value="JSONP">JSONP-->
 
     <div class="panel panel-default" id="toolbar" style="border-width: 0px; margin: 10px;">
-        <button class="btn btn-primary"  id="urlLooper">Start URL Audit</button>
+        <button class="btn btn-primary"  id="bottest">Start URL Audit</button>
+        <button class="btn btn-primary"  id="ssltest">SSL Test</button>
         <button class="btn btn-danger" id="clearResults">Clear Results</button>
     </div>
 
