@@ -14,7 +14,8 @@ Ext.define('SAT.view.main.MainController', {
 
     config: {
         stores: ['SpeedTestStore', 'OffensiveContentStore', 'MalwareStore',
-                    'AdwareStore', 'PhishingStore', 'FilterAvoidStore', 'SSLStore']
+                    'AdwareStore', 'PhishingStore', 'FilterAvoidStore', 'SSLStore'],
+        arr: []
     },
 
     alias: 'controller.main',
@@ -230,6 +231,8 @@ Ext.define('SAT.view.main.MainController', {
             store: 'main.'+store
         });
         chart.render(cell);
+
+        return chart;
     },
 
     onClickStartAudit: function(a, b) {
@@ -248,42 +251,57 @@ Ext.define('SAT.view.main.MainController', {
             p.style.setProperty('display', 'none');
         });
 
-//        var arr = [], counter = 0;
-//        var checkbox = Ext.ComponentQuery.query('[xtype=checkbox]');
-//        Ext.each(checkbox, function(c){
-//            if(!c.checked) {
-//                arr.push(counter);
-//            }
-//            counter++;
-//        });
+        var counter = 0;
+        this.getArr().length = 0;
+        var checkbox = Ext.ComponentQuery.query('[xtype=checkbox]');
+        Ext.each(checkbox, function(c){
+            if(!c.checked) {
+                me.getArr().push(counter);
+            }
+            counter++;
+        });
 
         this.executePromise(0).then(function() {
-            me.updateIcon(0);
-            me.updateButtons(0);
+            if(me.getArr().indexOf(0) === -1) {
+                me.updateIcon(0);
+                me.updateButtons(0);
+            }
             return me.executePromise(1);
         }).then(function() {
-            me.updateIcon(1);
-            me.updateButtons(1);
+            if(me.getArr().indexOf(1) === -1) {
+                me.updateIcon(1);
+                me.updateButtons(1);
+            }
             return me.executePromise(2);
         }).then(function() {
-            me.updateIcon(2);
-            me.updateButtons(2);
+            if(me.getArr().indexOf(2) === -1) {
+                me.updateIcon(2);
+                me.updateButtons(2);
+            }
             return me.executePromise(3);
         }).then(function() {
-            me.updateIcon(3);
-            me.updateButtons(3);
+            if(me.getArr().indexOf(3) === -1) {
+                me.updateIcon(3);
+                me.updateButtons(3);
+            }
             return me.executePromise(4);
         }).then(function() {
-            me.updateIcon(4);
-            me.updateButtons(4);
+            if(me.getArr().indexOf(4) === -1) {
+                me.updateIcon(4);
+                me.updateButtons(4);
+            }
             return me.executePromise(5);
         }).then(function() {
-            me.updateIcon(5);
-            me.updateButtons(5);
+            if(me.getArr().indexOf(5) === -1) {
+                me.updateIcon(5);
+                me.updateButtons(5);
+            }
             return me.executePromise(6);
         }).then(function(){
-            me.updateIcon(6);
-            me.updateButtons(6);
+            if(me.getArr().indexOf(6) === -1) {
+                me.updateIcon(6);
+                me.updateButtons(6);
+            }
             me.destroyCharts();
             me.revertButtons();
         });
@@ -365,6 +383,13 @@ Ext.define('SAT.view.main.MainController', {
     executePromise: function(index) {
         var me = this;
 
+        if(me.getArr().indexOf(index) !== -1) {
+            var promise = new Promise(function(resolve, reject) {
+                resolve('Checkbox disabled!!. Will not execute promise');
+            });
+            return promise;
+        }
+
         // Remove Icon
         var row = Ext.query('.results-grid .x-grid-row')[index],
             column = row.querySelectorAll('.x-grid-td')[2],
@@ -373,7 +398,7 @@ Ext.define('SAT.view.main.MainController', {
         cell.innerHTML = '';
 
         // Render Chart
-        this.renderGridChart(index);
+        var chart = this.renderGridChart(index);
 
         // Execute Promise
         var promise = new Promise(function(resolve, reject) {
@@ -388,7 +413,7 @@ Ext.define('SAT.view.main.MainController', {
                     me.updateStats(Math.round((Math.random()) * 20), 'upload');
                     me.updateStats(Math.round((Math.random()) * 20), 'download');
                 }
-                me.updateChart(timesRun, 100-timesRun, index);
+                me.updateChart(timesRun, 100-timesRun, index, chart);
             }, 1000);
         });
 
@@ -409,17 +434,10 @@ Ext.define('SAT.view.main.MainController', {
                 b.setText('View Full Results');
                 b.getEl().setStyle('padding', '10px 2px');
             });
-
-//            var btn = Ext.ComponentQuery.query('[itemId=start-button]');
-//            Ext.each(btn, function(b) {
-//                b.enable();
-//            });
         }
     },
 
-    updateChart: function(t, o, index) {
-        var chart = Ext.ComponentQuery.query('[itemId=polarChart]')[index];
-
+    updateChart: function(t, o, index, chart) {
         var obj = [
             {cat: 'Total global threats', data1: t},
             {cat: 'Other threats', data1: o}
