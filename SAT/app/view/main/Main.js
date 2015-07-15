@@ -40,7 +40,7 @@ Ext.define('SAT.view.main.Main', {
         margin: '0 0 20 0',
         x: 20,
         y: 12,
-        width: 830,
+        width: 825,
         title: '&nbsp;',
         items: [
             {
@@ -103,6 +103,7 @@ Ext.define('SAT.view.main.Main', {
                 }, {
                     xtype: 'button',
                     text: 'Start Audit',
+                    itemId: 'start-button',
                     cls: 'start-button',
                     handler: "onClickStartAudit",
                     style: {
@@ -180,10 +181,9 @@ Ext.define('SAT.view.main.Main', {
                 store: 'main.MainStore',
                 scrollable: false,
                 border: false,
-                hidden: false,
                 margin: '10 0 0 0',
                 width: 825,
-                height: 600,
+                height: 790,
                 viewConfig: {
                     listeners: {
                         itemclick: 'onThreatClick',
@@ -204,8 +204,11 @@ Ext.define('SAT.view.main.Main', {
                         xtype: 'widgetcolumn',
                         widget: {
                             xtype: 'checkbox',
-                            handler: 'handleCheckBoxSelection',
-                            name: 'chkAudit'
+                            listeners: {
+                                change: 'handleCheckBoxSelection'
+                            },
+                            name: 'chkAudit',
+                            cls: 'audit-checkbox'
                         },
                         width: 30
                     },
@@ -217,7 +220,7 @@ Ext.define('SAT.view.main.Main', {
                     },
                     {
                         dataIndex: 'polarData',
-                        width: 100,
+                        width: 90,
                         hidden: true
                     },
                     {
@@ -230,6 +233,7 @@ Ext.define('SAT.view.main.Main', {
             },
             {
                 xtype: 'button',
+                itemId: 'start-button',
                 text: 'Start Audit',
                 margin: '12 0 0 0',
                 cls: 'start-button',

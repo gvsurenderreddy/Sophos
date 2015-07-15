@@ -27,6 +27,20 @@ Ext.define('SAT.view.main.MainController', {
         }
     },
 
+    handleCheckBoxSelection: function(cb, checked) {
+        var index = cb.$widgetRecord.data.index,
+            row = Ext.query('.results-grid .x-grid-row')[index],
+            column = row.querySelectorAll('.x-grid-td');
+
+        if(!checked) {
+            column[2].style.setProperty('opacity', '0.5');
+            column[3].style.setProperty('opacity', '0.5');
+        } else {
+            column[2].style.setProperty('opacity', '1');
+            column[3].style.setProperty('opacity', '1');
+        }
+    },
+
     onResultsItemClick: function(view, category, item, index, e) {
         var clickedEl = Ext.get(e.target),
             value = clickedEl.getAttribute("class"), me = this;
@@ -85,10 +99,6 @@ Ext.define('SAT.view.main.MainController', {
         });
     },
 
-    handleCheckBoxSelection: function(checkbox, checked) {
-
-    },
-
     onThreatClick: function(data) {
 
     },
@@ -105,7 +115,7 @@ Ext.define('SAT.view.main.MainController', {
         var data = {
             value: value
         };
-        var tpl = new Ext.XTemplate("<div class='gridIcons'><img src='resources/images/{value}'></div>");
+        var tpl = new Ext.XTemplate("<div class='gridIcons' style='margin-top: 6px; margin-left: 7px'><img src='resources/images/{value}'></div>");
         var html = tpl.apply(data);
         return html;
     },
@@ -121,14 +131,14 @@ Ext.define('SAT.view.main.MainController', {
             var tpl = new Ext.XTemplate(
                 "<div class='gridContent'>" +
                     "<div class='top-div'>"+
-                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
-                        "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
+//                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
+                        "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -2px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -3px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
-                    "<table class='stats>" +
+                    "<table class='stats' style='float:left'>" +
                         "<tr class='stats-row'>" +
                             "<td class='ping'>" +
                                 "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='ping-text'>Ping</p>"+
@@ -143,11 +153,17 @@ Ext.define('SAT.view.main.MainController', {
                                 "<div class='upload-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>0 Mbps</div>"+
                             "</td>"+
                             "<td style='padding-left: 10px' class='content-td'>" +
-                                "<div class='gridContent' style='margin-top:-12px; white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left;'>{value}</div>"+
-                                "<div class='buttons-div' style='display: none'>"+
-                                    "<a href='#details' class='view-details' style='float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
-                                    "<input type='button' class='rerun' value='Rerun Test' style='margin-top:-2px; margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px;'>"+
-                                "</div>"+
+                                "<div class='gridContent' style='margin-top: -42px; white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left;'>{value}</div>"+
+                            "</td>"+
+                        "</tr>"+
+                    "</table>"+
+                    "<table class='buttons-div' style='float:right'>"+
+                        "<tr>"+
+//                            "<td>"+
+//                                "<input type='button' class='rerun' value='Rerun Test' style='display:none;background: #007ac6; border-radius: 5px; width: 80px; color: #fff; font-size: 10px;'>"+
+//                            "</td>" +
+                            "<td>"+
+                                "<a href='#details' class='view-details' style='display:none;font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
                             "</td>"+
                         "</tr>"+
                     "</table>"+
@@ -160,23 +176,27 @@ Ext.define('SAT.view.main.MainController', {
             var tpl = new Ext.XTemplate(
                 "<div class='gridContent'>" +
                     "<div class='top-div'>"+
-                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
-                        "<div class='threatTitle' style='float: left; margin-left: 5px; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
+//                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
+                        "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -2px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -3px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
                     "<div class='content-div'>"+
-                        "<div class='gridContent' style='white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left'>{value}</div>"+
-                        "<div class='buttons-div' style='display: none'>"+
-                            "<a href='#details' class='view-details' style='margin-top:5px; float: right; font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
-                            "<input type='button' class='rerun' value='Rerun Test' style='margin-top:2px; margin-right: 10px; background: #007ac6; float:right; border-radius: 5px; width: 80px; color: #fff; font-size: 10px'>"+
-                        "</div>"+
+                        "<div class='gridContent' style='margin-top:10px; white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left'>{value}</div>"+
                     "</div>"+
 
-                    //"<br>"+
-
+                    "<table class='buttons-div' style='float:right'>"+
+                    "<tr>"+
+//                        "<td>"+
+//                            "<input type='button' class='rerun' value='Rerun Test' style= 'display:none;background: #007ac6; border-radius: 5px; width: 80px; color: #fff; font-size: 10px;'>"+
+//                        "</td>" +
+                        "<td>"+
+                            "<a href='#details' class='view-details' style='display:none;font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
+                        "</td>"+
+                    "</tr>"+
+                    "</table>"+
                 "</div>");
             var html = tpl.apply(data);
             return html;
@@ -199,96 +219,140 @@ Ext.define('SAT.view.main.MainController', {
         return html;
     },
 
-    renderGridChart: function() {
-        var rows = Ext.query('.results-grid .x-grid-row'), counter = 0,
-            stores = this.getStores();
+    renderGridChart: function(index) {
+        var row = Ext.query('.results-grid .x-grid-row')[index],
+            store = this.getStores()[index];
 
-        var chart = Ext.ComponentQuery.query('[itemId=polarChart]');
+        var column = row.querySelectorAll('.x-grid-td')[2],
+            cell = column.querySelector('.x-grid-cell-inner');
 
-        if(chart && chart.length > 0) {
-            Ext.each(chart, function(c){
-                c.destroy();
-            });
-        }
-        Ext.each(rows, function(r){
-            var column = r.querySelectorAll('.x-grid-td')[1],
-                cell = column.querySelector('.x-grid-cell-inner');
-
-            var chart = Ext.create('SAT.view.main.PolarChart', {
-                store: 'main.'+stores[counter]
-            });
-            chart.render(cell);
-            counter++;
+        var chart = Ext.create('SAT.view.main.PolarChart', {
+            store: 'main.'+store
         });
+        chart.render(cell);
     },
 
     onClickStartAudit: function(a, b) {
-        var view = this.getView(),
-            me = this,
-            resultsGrid = view.down('[itemId=results-grid]'),
-            checkbox = resultsGrid.down('[xtype=widgetcolumn]'),
-            gridIcons = resultsGrid.down('[itemId=resultGridIcons]'),
-            chart = resultsGrid.down('[dataIndex=polarData]');
+        var me = this;
 
-//        var grid = Ext.query('.sat-main-view .results-grid')[0];
-//        grid.style.setProperty('height', '640px');
+        this.greyButtons();
 
-        resultsGrid.setHeight(640);
-        Ext.each(checkbox, function(c){
-            c.hide();
+        var pass = Ext.query('.result-pass'),
+            details = Ext.query('.view-details');
+
+        Ext.each(details, function(d){
+            d.style.setProperty('display', 'none');
         });
 
-        gridIcons.hide();
-        chart.show();
-
-        var smallIcons = Ext.query('.gridSmallIcon');
-        Ext.each(smallIcons, function(i){
-            i.style.setProperty('display', 'block');
+        Ext.each(pass, function(p){
+            p.style.setProperty('display', 'none');
         });
 
-        var rows = Ext.query('.results-grid .x-grid-row');
-        Ext.each(rows, function(r){
-            var column = r.querySelectorAll('.x-grid-td')[1],
-                chartColumn = column.querySelector('.x-grid-cell-inner');
-            chartColumn.style.setProperty('height', '82px');
-        });
-
-        var grid = Ext.query('.sat-main-view .results-grid .x-grid-item-container')[0];
-        grid.style.setProperty('padding-left', '30px');
-
-        this.renderGridChart();
+//        var arr = [], counter = 0;
+//        var checkbox = Ext.ComponentQuery.query('[xtype=checkbox]');
+//        Ext.each(checkbox, function(c){
+//            if(!c.checked) {
+//                arr.push(counter);
+//            }
+//            counter++;
+//        });
 
         this.executePromise(0).then(function() {
+            me.updateIcon(0);
             me.updateButtons(0);
             return me.executePromise(1);
         }).then(function() {
+            me.updateIcon(1);
             me.updateButtons(1);
             return me.executePromise(2);
         }).then(function() {
+            me.updateIcon(2);
             me.updateButtons(2);
             return me.executePromise(3);
         }).then(function() {
+            me.updateIcon(3);
             me.updateButtons(3);
             return me.executePromise(4);
         }).then(function() {
+            me.updateIcon(4);
             me.updateButtons(4);
             return me.executePromise(5);
         }).then(function() {
+            me.updateIcon(5);
             me.updateButtons(5);
             return me.executePromise(6);
         }).then(function(){
+            me.updateIcon(6);
             me.updateButtons(6);
+            me.destroyCharts();
+            me.revertButtons();
         });
 
+    },
+
+    greyButtons: function() {
+        var btn = Ext.query('.start-button'),
+            button = Ext.ComponentQuery.query('[itemId=start-button]');
+
+        Ext.each(button, function(b){
+            b.disabled = true;
+        });
+
+        Ext.each(btn, function(b){
+            b.style.setProperty('opacity', '0.5');
+            b.style.setProperty('cursor', 'default');
+        });
+    },
+
+    revertButtons: function() {
+        var btn = Ext.query('.start-button'),
+            button = Ext.ComponentQuery.query('[itemId=start-button]');
+
+        Ext.each(button, function(b){
+            b.disabled = false;
+        });
+
+        Ext.each(btn, function(b){
+            b.style.setProperty('opacity', '1');
+            b.style.setProperty('cursor', 'pointer');
+        });
+    },
+
+    destroyCharts: function() {
+        var chart = Ext.ComponentQuery.query('[itemId=polarChart]');
+        Ext.each(chart, function(c){
+            c.destroy();
+        });
+    },
+
+    updateIcon: function(index) {
+        var grid = Ext.ComponentQuery.query('[itemId=results-grid]')[0],
+            store = grid.getStore(),
+            record = store.getAt(index),
+            icon = record.getData().gridIcon;
+
+        var html = this.renderGridIcons(icon);
+
+        var row = Ext.query('.results-grid .x-grid-row')[index],
+            column = row.querySelectorAll('.x-grid-td')[2],
+            cell = column.querySelector('.x-grid-cell-inner');
+
+        cell.innerHTML = html;
     },
 
     rerunChart: function(index) {
-        var me = this;
+        var me = this,
+            row = Ext.query('.results-grid .x-grid-row')[index];
+
+        var column = row.querySelectorAll('.x-grid-td')[2],
+            cell = column.querySelector('.x-grid-cell-inner');
+            cell.innerHTML = '';
+
         this.executePromise(index).then(function() {
+            me.updateIcon(index);
             me.updateRerunButtons(index);
         });
     },
-
 
     updateRerunButtons: function(index) {
         var results = Ext.select('.result-pass').elements[index];
@@ -300,6 +364,18 @@ Ext.define('SAT.view.main.MainController', {
 
     executePromise: function(index) {
         var me = this;
+
+        // Remove Icon
+        var row = Ext.query('.results-grid .x-grid-row')[index],
+            column = row.querySelectorAll('.x-grid-td')[2],
+
+        cell = column.querySelector('.x-grid-cell-inner');
+        cell.innerHTML = '';
+
+        // Render Chart
+        this.renderGridChart(index);
+
+        // Execute Promise
         var promise = new Promise(function(resolve, reject) {
             var timesRun = 0;
             var f = setInterval(function(){
@@ -323,20 +399,21 @@ Ext.define('SAT.view.main.MainController', {
         var results = Ext.select('.result-pass').elements[index];
         results.style.setProperty('display', 'block');
 
-        var buttons = Ext.select('.buttons-div').elements[index];
-        Ext.each(buttons, function(b){
-            buttons.style.setProperty('display', 'block');
-        });
+        var details = Ext.select('.view-details').elements[index];
+        details.style.setProperty('display', 'block');
 
-//        var reruns = Ext.select('.rerun').elements[index];
-//        reruns.style.setProperty('display', 'block');
 
-        if(index === 6) {
+        if (index ===6) {
             var btn = Ext.ComponentQuery.query('[cls=start-button]');
             Ext.each(btn, function(b){
                 b.setText('View Full Results');
                 b.getEl().setStyle('padding', '10px 2px');
             });
+
+//            var btn = Ext.ComponentQuery.query('[itemId=start-button]');
+//            Ext.each(btn, function(b) {
+//                b.enable();
+//            });
         }
     },
 

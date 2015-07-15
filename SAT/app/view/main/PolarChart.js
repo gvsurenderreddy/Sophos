@@ -3,6 +3,8 @@ Ext.define('SAT.view.main.PolarChart', {
 
 //    xtype: 'polar',
 
+    cls: 'sat-polar',
+
     width: 80,
 
     margin: '0 0 0 2',
@@ -12,9 +14,12 @@ Ext.define('SAT.view.main.PolarChart', {
     header: false,
     height: 80,
     colors: ["#2ac8ef", "#ececec"],
-    animate: false,
+    animation: {
+        easing: 'ease',
+        duration: 200
+    },
     insetPadding: {top: 0, left: 0, right: 0, bottom: 0},
-    innerPadding: 2,
+    innerPadding: 4,
     series: [{
         type: 'pie',
         angleField: 'data1',

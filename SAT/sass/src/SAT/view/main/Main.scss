@@ -21,22 +21,9 @@
       }
 
       .x-form-checkbox-default {
-        background: url(images/form/checkbox.png) no-repeat;
-        width: 15px;
-        height: 15px;
         margin-top: 38px;
       }
-      .x-form-cb-checked .x-form-checkbox-default {
-          background: url("images/check-on.png");
-          width: 20px;
-          height: 18px;
-          margin-top: 38px;
-      }
-      .x-form-cb-checked .x-field-default-form-checkbox-focus {
-          background: url("images/check-on.png");
-          width: 20px;
-          height: 18px;
-      }
+
      .main-panel .x-autocontainer-outerCt {
 //         background: #fbfbfb;
          font-family: Flama-Basic;
@@ -55,11 +42,16 @@
       background-color: #ffffff;
     }
 
-    .results-grid .x-grid-with-row-lines .x-grid-item {
-      margin-bottom: 5px;
-    }
     .results-grid .x-grid-item-container {
-      padding-left: 10px;
+      padding-left: 15px;
+    }
+
+    .results-grid .x-grid-cell-inner {
+      margin-top:10px;
+    }
+
+    .results-grid .x-grid-with-row-lines .x-grid-item {
+      height: 110px;
     }
 
     .x-grid-view {
@@ -71,6 +63,7 @@
 
     .results-grid .x-grid-with-row-lines .x-grid-item:first-child {
       border-top-width: 0px;
+      height:120px;
     }
 
     .results-grid .x-grid-with-row-lines .x-grid-item:last-child {
@@ -78,7 +71,7 @@
     }
 
     .x-draw-container {
-      top: -18px;
-      left: -5px;
+//      top: -18px;
+      left: -10px;
     }
 }
