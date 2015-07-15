@@ -74,4 +74,12 @@
 //      top: -18px;
       left: -10px;
     }
+
+    .x-grid-item-focused .x-grid-cell-inner {
+      z-index: initial;
+    }
+
+    .x-form-cb-checked .x-form-checkbox-default {
+      background-position: -15px -15px;
+    }
 }

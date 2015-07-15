@@ -134,7 +134,7 @@ Ext.define('SAT.view.main.MainController', {
 //                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -3px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -3px; background-color:lightgreen; text-align: center; color:darkgreen; font-weight: 600; width:80px; height: 18px; display: none''>Passed!</div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
@@ -179,7 +179,7 @@ Ext.define('SAT.view.main.MainController', {
 //                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
                         "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -3px; background-color:rgb(22, 192, 81); text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none''>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -3px; background-color:lightgreen; text-align: center; color:darkgreen; font-weight: 600; width:80px; height: 18px; display: none''>Passed!</div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
