@@ -1,26 +1,50 @@
 [
     {
-        "url": "http://www.testsite.com",
+        "url": "http://www.staticapps.com",
         "method": "CORS"
     },
     {
-        "url": "http://www.testsite.com",
+        "url": "http://www.pong.com",
         "method": "JSONP"
+    },
+    {
+        "url": "http://www.staticapps.org",
+        "method": "CORS"
+    },
+    {
+        "url": "http://www.webcodegeeks.com",
+        "method": "CORS"
+    },
+    {
+        "url": "http://www.pong.com",
+        "method": "CORS"
+    },
+    {
+        "url": "http://www.pong.com",
+        "method": "CORS"
     },
     {
         "url": "http://www.msn.com",
         "method": "CORS"
     },
     {
-        "url": "http://www.msn.com",
+        "url": "http://www.pong.com",
         "method": "JSONP"
     },
     {
-        "url": "http://www.abc.com",
+        "url": "http://www.webcodegeeks.com",
         "method": "CORS"
     },
     {
-        "url": "http://www.abc.com",
+        "url": "http://www.webcodegeeks.com",
         "method": "JSONP"
+    },
+    {
+        "url": "http://www.pong.com",
+        "method": "CORS"
+    },
+    {
+        "url": "http://www.staticapps.com",
+        "method": "CORS"
     }
 ]

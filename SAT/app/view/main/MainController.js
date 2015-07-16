@@ -143,15 +143,15 @@ Ext.define('SAT.view.main.MainController', {
                         "<tr class='stats-row'>" +
                             "<td class='ping'>" +
                                 "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='ping-text'>Ping</p>"+
-                                "<div class='ping-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>10ms</div>"+
+                                "<div class='ping-box'>0 ms</div>"+
                             "</td>"+
                             "<td class='download'>" +
                                 "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='download-text'>Download Speed</p>"+
-                                "<div class='download-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>0 Mbps</div>"+
+                                "<div class='download-box'>0 Mbps</div>"+
                             "</td>"+
                             "<td class='upload'>" +
                                 "<p style='margin-top: 2px; color: #0171B9; font-size: smaller; font-weight: 600;' class='upload-text'>Upload Speed</p>"+
-                                "<div class='upload-box' style='margin-top:-10px; background-color:#C3E2E6; text-align: center; color:black; width:90px; height: 34px; font-size: 18px; font-weight: 300; padding-top: 10px'>0 Mbps</div>"+
+                                "<div class='upload-box'>0 Mbps</div>"+
                             "</td>"+
                             "<td style='padding-left: 10px' class='content-td'>" +
                                 "<div class='gridContent' style='margin-top: -42px; white-space: pre-wrap;font-family: Flama-Basic;font-weight: 400; float: left;'>{value}</div>"+
@@ -221,7 +221,8 @@ Ext.define('SAT.view.main.MainController', {
     },
 
     renderGridChart: function(index) {
-        var row = Ext.query('.results-grid .x-grid-row')[index],
+        var me = this,
+            row = Ext.query('.results-grid .x-grid-row')[index],
             store = this.getStores()[index];
 
         var column = row.querySelectorAll('.x-grid-td')[2],
@@ -230,7 +231,13 @@ Ext.define('SAT.view.main.MainController', {
         var chart = Ext.create('SAT.view.main.PolarChart', {
             store: 'main.'+store
         });
-        chart.render(cell);
+
+        //high charts
+        if(index == 0 ){
+            me.renderSpeedTestChart($(cell));
+        }else{
+            chart.render(cell);
+        }
 
         return chart;
     },
@@ -355,6 +362,11 @@ Ext.define('SAT.view.main.MainController', {
             column = row.querySelectorAll('.x-grid-td')[2],
             cell = column.querySelector('.x-grid-cell-inner');
 
+        //clean-up/destroy highcharts and related container class
+        if(index === 0){
+            $(cell).removeClass("highChartSize");
+            this.highChart.destroy();
+        }
         cell.innerHTML = html;
     },
 
@@ -402,19 +414,35 @@ Ext.define('SAT.view.main.MainController', {
 
         // Execute Promise
         var promise = new Promise(function(resolve, reject) {
-            var timesRun = 0;
-            var f = setInterval(function(){
-                timesRun += 20;
-                if(timesRun === 100){
-                    clearInterval(f);
-                    resolve("Stuff worked!");
-                }
-                if(index === 0) {
-                    me.updateStats(Math.round((Math.random()) * 20), 'upload');
-                    me.updateStats(Math.round((Math.random()) * 20), 'download');
-                }
-                me.updateChart(timesRun, 100-timesRun, index, chart);
-            }, 1000);
+            switch(index) {
+                case 0://speed-test
+                    me.startSpeedTest(index, resolve, reject, chart);
+                    //resolve("Temp-Done");
+                    break;
+                case 1://offensive
+                case 3://adware
+                case 4://phishing
+                    me.startBotTest(index, resolve, reject, chart);
+                    break;
+                case 6://ssl
+                     me.startSslTest(index, resolve, reject, chart);
+                    break;
+                default:
+                    var timesRun = 0;
+                    var f = setInterval(function(){
+                        timesRun += 20;
+                        if(timesRun === 100){
+                            clearInterval(f);
+                            resolve("Stuff worked!");
+                        }
+                        if(index === 0) {
+                            //me.updateStats(Math.round((Math.random()) * 20), 'upload');
+                            //me.updateStats(Math.round((Math.random()) * 20), 'download');
+                        }
+                        me.updateChart(timesRun, 100-timesRun, index, chart);
+                    }, 1000);
+                    break;
+            }
         });
 
         return promise;
@@ -434,10 +462,16 @@ Ext.define('SAT.view.main.MainController', {
                 b.setText('View Full Results');
                 b.getEl().setStyle('padding', '10px 2px');
             });
+
+//            var btn = Ext.ComponentQuery.query('[itemId=start-button]');
+//            Ext.each(btn, function(b) {
+//                b.enable();
+//            });
         }
     },
 
     updateChart: function(t, o, index, chart) {
+
         var obj = [
             {cat: 'Total global threats', data1: t},
             {cat: 'Other threats', data1: o}
@@ -459,11 +493,21 @@ Ext.define('SAT.view.main.MainController', {
     },
 
     updateStats: function(val, testMode){
+        //debugger;
         var sRef = (testMode == "download" ? ".download-box" : ".upload-box");
         var speed = Ext.select(sRef).elements[0];
 
         if(speed){
-            speed.innerHTML = val+'Mbps';
+            speed.innerHTML = (val || 0)  + ' Mbps';
+        }
+    },
+
+    updatePingBox: function(val){
+        var sRef = ".ping-box";
+        var pingBox = Ext.select(sRef).elements[0];
+
+        if(pingBox){
+            pingBox.innerHTML = (val || 0) + ' ms';
         }
     },
 
@@ -539,6 +583,461 @@ Ext.define('SAT.view.main.MainController', {
 
     getTitle: function(text) {
         return text.match('<title>(.*)?</title>')[1];
-    }
+    },
+    //-----------------------------------------------------------------------------------------------------------//
+    getSpeedTestConfig: function(){
+            // TODO: move to config
+            var config = {};
+
+            config.account = "SOM55a3d468ce033"; //your API Key here
+            config.domainName = "localhost:63342";//your domain or sub-domain here
+
+            return config;
+        },
+
+    startSpeedTest: function(index, resolve, reject, chart){
+        var me = this,
+            chart = me.highChart,
+            speedTestConfig = me.getSpeedTestConfig();
+
+        //create callbacks - onTestCompleted, onError, onProgress
+        function onTestCompleted(testResult) {
+            me.updatePingBox(testResult.latency);
+
+            me.updateStats(testResult.download, "download" );
+            me.updateStats(testResult.upload, "upload" );
+            //promise resolved
+            resolve("SOM worked!!!");
+            console.log("SOM onTestCompleted");
+        }
+
+        function onError(error) {
+           //reject the promise
+            reject("SOM failed");
+           console.log("SOM Error " + error.code + ": " + error.message);
+        }
+
+        function onProgress(progress) {
+            var point = chart.series[0].points[0];
+            point.update(progress.currentSpeed);
+
+            me.updateStats(progress.currentSpeed, progress.type );
+
+        }
+        //init Set up and callbacks
+        SomApi.account = speedTestConfig.account;
+        SomApi.domainName = speedTestConfig.domainName;
+        SomApi.onTestCompleted = onTestCompleted;
+        SomApi.onError = onError;
+        SomApi.onProgress = onProgress;
+
+        //set config values
+        SomApi.config.sustainTime = 3; //Accurate Test (fast)1-8(slow but accurate)
+        SomApi.config.testServerEnabled = true;
+        SomApi.config.userInfoEnabled = true;
+        SomApi.config.latencyTestEnabled = true;
+        SomApi.config.uploadTestEnabled = true;
+        SomApi.config.progress.enabled = true;
+        SomApi.config.progress.verbose = true;
+
+        //start the SpeedTest
+        SomApi.startTest();
+    },
+
+    startBotTest: function (index, resolve, reject, chart){
+        var me = this;
+        function successCallbackBot(){
+            try{
+                me.postAuditResults(index, resolve, reject);
+
+                //Display Final results
+                me.logResponse("URL Audit Results:" ,  me.results);
+
+            }catch(e){
+                //to handle HTML display errors from ajax resp HTML
+            }
+        }
+
+        me.initAudit(me.apiUriBot, index, successCallbackBot, chart);
+    },
+
+    startSslTest: function(index, resolve, reject, chart){
+        var me = this;
+        function successCallbackSsl(){
+            try{
+                //Display Final results/SSL Rating
+                var respText = (me.results[0].responseText || '{"rating":"Unable to Audit"}'),
+                    rating = JSON.parse(respText).rating,
+                    row = Ext.query('.results-grid .x-grid-row')[index];
+                $(row).find(".result-pass").text(rating);
+
+                me.logResponse("URL Audit Results:" , respText);
+
+                resolve("startSslTest Complete!");
+
+            }catch(e){
+                reject("startSslTest failed!");
+            }
+         }
+
+        me.initAudit(me.apiUriSsl, index, successCallbackSsl, chart);
+
+    },
+
+    renderSpeedTestChart: function($chartContainer){
+            var me = this,
+            testMode = "download";
+            //$chartContainer.css({"height": "100px", "width": "100px"});
+            $chartContainer.addClass("highChartSize");
+            $chartContainer.highcharts({
+                    credits: { enabled: false },
+                    tooltip: { enabled: false },
+                    dataLabels: false,
+                    plotOptions: {
+                        gauge: {
+                            dataLabels: false
+                        }
+                    },
+                    chart: {
+                        type: 'gauge',
+                        plotBackgroundColor: null,
+                        plotBackgroundImage: null,
+                        plotBorderWidth: 0,
+                        plotShadow: false,
+                        spacingTop: 2,
+                        spacingLeft: 0,
+                        spacingRight: 0,
+                        spacingBottom: 0
+                    },
+                    title: {
+                        text: 'Test',
+                        style: {
+                            display: 'none'
+                        }
+                    },
+                    mode: testMode,
+                    pane: {
+                        startAngle: -150,
+                        endAngle: 150,
+                        background: [{
+                            backgroundColor: {
+                                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                stops: [
+                                    [0, '#FFF'],
+                                    [1, '#333']
+                                ]
+                            },
+                            borderWidth: 0,
+                            outerRadius: '109%'
+                        }, {
+                            backgroundColor: {
+                                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                stops: [
+                                    [0, '#333'],
+                                    [1, '#FFF']
+                                ]
+                            },
+                            borderWidth: 4,
+                            outerRadius: '107%'
+                        }, {
+                            // default background
+                        }, {
+                            backgroundColor: '#DDD',
+                            borderWidth: 0,
+                            outerRadius: '105%',
+                            innerRadius: '103%'
+                        }]
+                    },
+
+                    // the value axis
+                    yAxis: {
+                        min: 0,
+                        max: 100,
+
+                        minorTickInterval: 'auto',
+                        minorTickWidth: 1,
+                        minorTickLength: 5,
+                        minorTickPosition: 'inside',
+                        minorTickColor: '#666',
+
+                        tickPixelInterval: 30,
+                        tickWidth: 2,
+                        tickPosition: 'inside',
+                        tickLength: 10,
+                        tickColor: '#666',
+                         labels: {
+                             enabled: false
+                         },
+                        /*title: {
+                         text: 'Mbps'
+                         },*/
+                        plotBands: [{
+                            from: 30,
+                            to: 100,
+                            color: '#55BF3B' // green
+                        }, {
+                            from: 10,
+                            to: 30,
+                            color: '#DDDF0D' // yellow
+                        }, {
+                            from: 0,
+                            to: 10,
+                            color: '#DF5353' // red
+                        }]
+                    },
+
+                    series: [{
+                        name: 'Speed',
+                        data: [80]
+                    }]
+
+                },
+                //chart callbk
+                function (chart) {
+                    me.highChart = chart; //shortcut - accessed by Speedtest (SOM) progress callbacks to update current Speed Mbps
+                });//end-hc
+    },
+
+    apiPostAuditResults : "data/analyzedresults.json", //replace with REST URI
+
+    apiUriBot : "data/urllist.json", //replace with REST URI
+
+    apiUriSsl : "data/urllistssl.json", //replace with REST URI
+
+    deferreds : [],
+
+    results : [],
+
+    gTimeout : 5000,
+
+    cleanUpPreviousTest: function (){
+            var me = this;
+            me.deferreds = [];
+            me.results = [];
+    },
+
+    initAudit: function (apiUri, index, successCallBk, chart){
+            var me = this;
+            //clear previous results...
+            me.cleanUpPreviousTest();
+
+            $.ajax({
+                url: apiUri,
+                method: "GET",
+                dataType: "json"
+            })
+            .done(function(list) {
+                me.auditUrlsAndExecCallbk(list, index, successCallBk, chart);
+            })
+            .fail(function() {
+                alert( "error" );
+            })
+            .always(function() {
+                //alert( "complete" );
+            });
+        },
+
+    auditUrlsAndExecCallbk: function (list, index, successCallBk, chart){
+            var me = this;
+            //wait spinner .....
+            me.logResponse("Audit status", "Loading and testing " + list.length + " URLs...please wait..... <img class='clsRowSpinner' src='../resources/images/loading.gif'>");
+
+            var i;
+            for(i = 0; i < list.length; i++) {
+                var url = list[i].url,
+                        method = list[i].method ;//  + '?' + new Date().getTime();
+
+                var dObject = new $.Deferred();
+                me.deferreds.push(dObject);
+
+                switch(method) {
+                    case "CORS":
+                        me.doCors(url, index, dObject, list, chart);
+                        break;
+                    case "JSONP":
+                        me.doJsonp(url, index, dObject, list, chart);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            // check if all ajax calls have finished
+            $.when.apply($, me.deferreds)
+                    .done(function() {
+                        console.log(me.results);
+                        successCallBk.call(this);
+                    });//end:done
+        },
+
+    doCors: function (url, index, dObject, list, chart) {
+            var me = this;
+            //var xdata = {json: $.toJSON({name: number}), delay: 1};
+            try{
+                $.ajax({
+                    url:url,
+                    timerStart: new Date().getTime(),
+                    timeout: me.gTimeout,
+                    type: "GET",
+                    contentType: 'text/plain',
+                    crossDomain: true,
+                    xhrFields: {
+                        // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
+                        // This can be used to set the 'withCredentials' property.
+                        // Set the value to 'true' if you'd like to pass cookies to the server.
+                        // If this is enabled, your server must respond with the header
+                        // 'Access-Control-Allow-Credentials: true'.
+                        withCredentials: false
+                    },
+                    headers: {
+                        // Set any custom headers here.
+                        // If you set any non-simple headers, your server must include these
+                        // headers in the 'Access-Control-Allow-Headers' response header.
+                    },
+                    complete: function(data) {
+                        data.url = this.url;
+                        data.method = 'CORS';
+                        data.timerStart = this.timerStart;
+                        data.timerEnd = new Date().getTime();
+                        data.timerDuration = (data.timerEnd - data.timerStart);
+
+                        me.results.push(data);
+                        dObject.resolve();
+
+                        me.updateProgressPercentage(list,index, chart);
+                    }
+                });//end ajax
+            }
+            catch(e){
+                logResponse("Exception:doCors", e);
+            }
+
+        },
+
+    doJsonp: function (url, index, dObject, list, chart){
+            var me = this;
+            try{
+                // Example URLs with JSONP support
+                // https://graph.facebook.com/?ids=http://www.stackoverflow.com
+                // https://jsonp.afeld.me/?callback=?&url=http://jsonview.com/example.json
+
+                $.ajax({
+                    url: url,
+                    timeout: me.gTimeout,
+                    timerStart: new Date().getTime(),
+                    jsonp: "callback",
+                    dataType: "jsonp",
+                    // Work with the response
+                    complete: function(data) {
+                        data.url = this.url;
+                        data.method = 'JSONP';
+                        data.timerStart = this.timerStart;
+                        data.timerEnd = new Date().getTime();
+                        data.timerDuration = (data.timerEnd - data.timerStart);
+
+                        me.results.push(data);
+                        dObject.resolve();
+
+                        me.updateProgressPercentage(list, index, chart);
+                    }
+                });//end ajax
+            }
+            catch(e){
+                logResponse("Exception", e);
+            }
+        },
+
+    updateProgressPercentage: function(list, index, chart){
+            var me = this,
+                totalUrls = list.length,
+                    completedUrls =  me.results.length,
+                    completedUrlsPercentage = ((completedUrls/totalUrls) * 100) ;
+            //round it
+            completedUrlsPercentage = Math.round(completedUrlsPercentage);
+
+            me.updateChart(completedUrlsPercentage, 100-completedUrlsPercentage, index, chart);
+            console.log("completedUrlsPercentage= " + completedUrlsPercentage);
+        },
+
+    postAuditResults: function (index, resolve, reject){
+            var me = this,
+                results = me.results,
+                postResultsData = [];
+
+            //collect data to POST to server
+             $.each(results, function(index, resp){
+                    var urlInfo = {};
+                    urlInfo.url = resp.url;
+                    urlInfo.xhrResponse =  me.parseAjaxResp(resp);
+                    urlInfo.xhrHeaders = me.dumpHeaders(resp);
+                    postResultsData.push(urlInfo);
+             });
+
+                $.ajax({
+                    url: me.apiPostAuditResults,
+                    method: "POST",
+                    data: JSON.stringify(postResultsData)
+                })
+                .done(function(data) {
+                    //this is where server analysed data/reports are returned
+                    //update view and display reports
+                    //displayAnalysedReoprts(data);
+                    console.log(postResultsData);
+                    resolve("Bot-Test both phase Success!");
+                })
+                .fail(function() {
+                    //alert( "error" );
+                    reject("Bot-Test Failed!");
+                })
+                .always(function() {
+                    //alert( "complete" );
+                });
+        },
+
+    logResponse: function (hdr, msg, isObject){
+            var msgTxt = msg;
+            if(isObject){
+                msgTxt = "";
+                $.each(msg, function(key, val){
+                    msgTxt += key + "=" + val + "|";
+                });
+            }
+            console.log("Header:" + hdr + "=" + msgTxt );
+        },
+
+    parseAjaxResp: function (resp){
+            var msg = "";
+            //msg += "|URL:" + resp.url || "";
+            msg += "|readyState:" + resp.readyState;
+            //msg += "|responseText:" + ($('<div/>').html(resp.responseText).text() || "none");
+            msg += "|status:" + resp.status;
+            msg += "|statusText:" + resp.statusText;
+            //msg += "|responseText:" + (resp.responseText || "none");
+            //msg += "|timeout:" + resp.timeout;
+            return msg;
+        },
+
+    dumpHeaders: function(xhr){
+            var msg = "";
+            if (xhr.getAllResponseHeaders) {
+                var hdrs = xhr.getAllResponseHeaders();
+                hdrs = hdrs.split('\r\n');
+                var hdrCount = 0;
+                for (var k = 0; k < hdrs.length; k++) {
+                    if (hdrs[k].trim().length == 0) {
+                        continue;
+                    }
+                    hdrCount++;
+                }
+                if (hdrCount > 0) {
+                    msg += hdrs.join('|');
+                }
+                else {
+                    msg += 'No visible response header found';
+                }
+            }
+            return msg;
+        }
+
 
 });
