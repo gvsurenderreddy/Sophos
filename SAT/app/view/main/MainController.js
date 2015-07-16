@@ -590,7 +590,7 @@ Ext.define('SAT.view.main.MainController', {
             var config = {};
 
             config.account = "SOM55a3d468ce033"; //your API Key here
-            config.domainName = "localhost:63342";//your domain or sub-domain here
+            config.domainName = "crowbarsecurity.azurewebsites.net"; //"localhost:63342";//your domain or sub-domain here
 
             return config;
         },
@@ -973,10 +973,15 @@ Ext.define('SAT.view.main.MainController', {
                     postResultsData.push(urlInfo);
              });
 
+/*              //TODO: Re-enable after CSI server POST is enabled
                 $.ajax({
                     url: me.apiPostAuditResults,
                     method: "POST",
                     data: JSON.stringify(postResultsData)
+                })*/
+                $.ajax({
+                    url: me.apiPostAuditResults,
+                    method: "GET"
                 })
                 .done(function(data) {
                     //this is where server analysed data/reports are returned
