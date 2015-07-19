@@ -424,6 +424,9 @@ Ext.define('SAT.view.main.MainController', {
                 case 4://phishing
                     me.startBotTest(index, resolve, reject, chart);
                     break;
+                case 2://ssl
+                    me.startMalwareTest(index, resolve, reject, chart);
+                    break;
                 case 6://ssl
                      me.startSslTest(index, resolve, reject, chart);
                     break;
@@ -684,6 +687,24 @@ Ext.define('SAT.view.main.MainController', {
 
     },
 
+    startMalwareTest: function (index, resolve, reject, chart){
+        var me = this;
+        function successCallbackMalware(){
+            try{
+                //Display Final results/SSL Rating
+                var respText = (me.results[0].responseText || '{"rating":"Unable to Audit"}');
+                me.logResponse("URL Audit Results:" , respText);
+
+                resolve("startMalwareTest Complete!");
+
+            }catch(e){
+                reject("startMalwareTest failed!");
+            }
+        }
+
+        me.initAudit(me.apiUriMalware, index, successCallbackMalware, chart);
+    },
+
     renderSpeedTestChart: function($chartContainer){
             var me = this,
             testMode = "download";
@@ -803,6 +824,8 @@ Ext.define('SAT.view.main.MainController', {
     apiUriBot : "data/urllist.json", //replace with REST URI
 
     apiUriSsl : "data/urllistssl.json", //replace with REST URI
+
+    apiUriMalware : "data/urlmalware.json", //replace with REST URI
 
     deferreds : [],
 
