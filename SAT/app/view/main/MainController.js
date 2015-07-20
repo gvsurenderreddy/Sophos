@@ -606,9 +606,12 @@ Ext.define('SAT.view.main.MainController', {
         //create callbacks - onTestCompleted, onError, onProgress
         function onTestCompleted(testResult) {
             me.updatePingBox(testResult.latency);
-
             me.updateStats(testResult.download, "download" );
             me.updateStats(testResult.upload, "upload" );
+
+            //update Audit final result
+            me.displayAuditStatus(index, "Complete!", true);
+
             //promise resolved
             resolve("SOM worked!!!");
             console.log("SOM onTestCompleted");
@@ -670,10 +673,10 @@ Ext.define('SAT.view.main.MainController', {
             try{
                 //Display Final results/SSL Rating
                 var respText = (me.results[0].responseText || '{"rating":"Unable to Audit"}'),
-                    rating = JSON.parse(respText).rating,
-                    row = Ext.query('.results-grid .x-grid-row')[index];
-                $(row).find(".result-pass").text(rating);
+                    rating = JSON.parse(respText).rating;
 
+                //update Audit final result
+                me.displayAuditStatus(index, rating, true);
                 me.logResponse("URL Audit Results:" , respText);
 
                 resolve("startSslTest Complete!");
@@ -692,7 +695,15 @@ Ext.define('SAT.view.main.MainController', {
         function successCallbackMalware(){
             try{
                 //Display Final results/SSL Rating
-                var respText = (me.results[0].responseText || '{"rating":"Unable to Audit"}');
+                var respText = (me.results[0].responseText || 'Unable to Audit!!');
+                if(respText === "malware string here"){//vulnerable
+                    //update Audit final result
+                    me.displayAuditStatus(index, "Failed!!", false);
+                }
+                else{//secure
+                    //update Audit final result
+                    me.displayAuditStatus(index, "Passed!", true);
+                }
                 me.logResponse("URL Audit Results:" , respText);
 
                 resolve("startMalwareTest Complete!");
@@ -1007,9 +1018,10 @@ Ext.define('SAT.view.main.MainController', {
                     method: "GET"
                 })
                 .done(function(data) {
-                    //this is where server analysed data/reports are returned
-                    //update view and display reports
-                    //displayAnalysedReoprts(data);
+                    var auditStatus = (data.status || "Unable to Audit!")
+                    //update Audit final result
+                    me.displayAuditStatus(index, auditStatus, false);
+
                     console.log(postResultsData);
                     resolve("Bot-Test both phase Success!");
                 })
@@ -1065,7 +1077,10 @@ Ext.define('SAT.view.main.MainController', {
                 }
             }
             return msg;
-        }
-
+    },
+    displayAuditStatus: function(auditIndex, displayString, blnPass){
+         var row = Ext.query('.results-grid .x-grid-row')[auditIndex];
+             $(row).find(".result-pass").text(displayString);
+    }
 
 });
