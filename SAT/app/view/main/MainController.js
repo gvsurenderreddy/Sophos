@@ -392,65 +392,6 @@ Ext.define('SAT.view.main.MainController', {
         reruns.style.setProperty('display', 'block');
     },
 
-    executePromise: function(index) {
-        var me = this;
-
-        if(me.getArr().indexOf(index) !== -1) {
-            var promise = new Promise(function(resolve, reject) {
-                resolve('Checkbox disabled!!. Will not execute promise');
-            });
-            return promise;
-        }
-
-        // Remove Icon
-        var row = Ext.query('.results-grid .x-grid-row')[index],
-            column = row.querySelectorAll('.x-grid-td')[2],
-
-        cell = column.querySelector('.x-grid-cell-inner');
-        cell.innerHTML = '';
-
-        // Render Chart
-        var chart = this.renderGridChart(index);
-
-        // Execute Promise
-        var promise = new Promise(function(resolve, reject) {
-            switch(index) {
-                case 0://speed-test
-                    me.startSpeedTest(index, resolve, reject, chart);
-                    //resolve("Temp-Done");
-                    break;
-                case 1://offensive
-                case 3://adware
-                case 4://phishing
-                    me.startBotTest(index, resolve, reject, chart);
-                    break;
-                case 2://ssl
-                    me.startMalwareTest(index, resolve, reject, chart);
-                    break;
-                case 6://ssl
-                     me.startSslTest(index, resolve, reject, chart);
-                    break;
-                default:
-                    var timesRun = 0;
-                    var f = setInterval(function(){
-                        timesRun += 20;
-                        if(timesRun === 100){
-                            clearInterval(f);
-                            resolve("Stuff worked!");
-                        }
-                        if(index === 0) {
-                            //me.updateStats(Math.round((Math.random()) * 20), 'upload');
-                            //me.updateStats(Math.round((Math.random()) * 20), 'download');
-                        }
-                        me.updateChart(timesRun, 100-timesRun, index, chart);
-                    }, 1000);
-                    break;
-            }
-        });
-
-        return promise;
-    },
-
     updateButtons: function(index) {
         var results = Ext.select('.result-pass').elements[index];
         results.style.setProperty('display', 'block');
@@ -587,6 +528,67 @@ Ext.define('SAT.view.main.MainController', {
     getTitle: function(text) {
         return text.match('<title>(.*)?</title>')[1];
     },
+
+    executePromise: function(index) {
+            var me = this;
+
+            if(me.getArr().indexOf(index) !== -1) {
+                var promise = new Promise(function(resolve, reject) {
+                    resolve('Checkbox disabled!!. Will not execute promise');
+                });
+                return promise;
+            }
+
+            // Remove Icon
+            var row = Ext.query('.results-grid .x-grid-row')[index],
+                column = row.querySelectorAll('.x-grid-td')[2],
+
+            cell = column.querySelector('.x-grid-cell-inner');
+            cell.innerHTML = '';
+
+            // Render Chart
+            var chart = this.renderGridChart(index);
+
+            // Execute Promise
+            var promise = new Promise(function(resolve, reject) {
+                switch(index) {
+                    case 0://speed-test
+                        me.startSpeedTest(index, resolve, reject, chart);
+                        //resolve("Temp-Done");
+                        break;
+                    case 1://offensive
+                    case 3://adware
+                    case 4://phishing
+                    case 5://filter-avoidance
+                         me.initAudit(me.apiUriBot, index, chart, resolve, reject);
+                        break;
+                    case 2://malware
+                        me.initAudit(me.apiUriMalware, index, chart, resolve, reject);
+                        break;
+                    case 6://ssl
+                        me.initAudit(me.apiUriSsl, index, chart, resolve, reject);
+                        break;
+                    default://make fake data, for testing
+                        var timesRun = 0;
+                        var f = setInterval(function(){
+                            timesRun += 20;
+                            if(timesRun === 100){
+                                clearInterval(f);
+                                resolve("Stuff worked!");
+                            }
+                            if(index === 0) {
+                                //me.updateStats(Math.round((Math.random()) * 20), 'upload');
+                                //me.updateStats(Math.round((Math.random()) * 20), 'download');
+                            }
+                            me.updateChart(timesRun, 100-timesRun, index, chart);
+                        }, 1000);
+                        break;
+                }
+            });
+
+            return promise;
+    },
+
     //-----------------------------------------------------------------------------------------------------------//
     getSpeedTestConfig: function(){
             // TODO: move to config
@@ -648,72 +650,6 @@ Ext.define('SAT.view.main.MainController', {
 
         //start the SpeedTest
         SomApi.startTest();
-    },
-
-    startBotTest: function (index, resolve, reject, chart){
-        var me = this;
-        function successCallbackBot(){
-            try{
-                me.postAuditResults(index, resolve, reject);
-
-                //Display Final results
-                me.logResponse("URL Audit Results:" ,  me.results);
-
-            }catch(e){
-                //to handle HTML display errors from ajax resp HTML
-            }
-        }
-
-        me.initAudit(me.apiUriBot, index, successCallbackBot, chart);
-    },
-
-    startSslTest: function(index, resolve, reject, chart){
-        var me = this;
-        function successCallbackSsl(){
-            try{
-                //Display Final results/SSL Rating
-                var respText = (me.results[0].responseText || '{"rating":"Unable to Audit"}'),
-                    rating = JSON.parse(respText).rating;
-
-                //update Audit final result
-                me.displayAuditStatus(index, rating, true);
-                me.logResponse("URL Audit Results:" , respText);
-
-                resolve("startSslTest Complete!");
-
-            }catch(e){
-                reject("startSslTest failed!");
-            }
-         }
-
-        me.initAudit(me.apiUriSsl, index, successCallbackSsl, chart);
-
-    },
-
-    startMalwareTest: function (index, resolve, reject, chart){
-        var me = this;
-        function successCallbackMalware(){
-            try{
-                //Display Final results/SSL Rating
-                var respText = (me.results[0].responseText || 'Unable to Audit!!');
-                if(respText === "malware string here"){//vulnerable
-                    //update Audit final result
-                    me.displayAuditStatus(index, "Failed!!", false);
-                }
-                else{//secure
-                    //update Audit final result
-                    me.displayAuditStatus(index, "Passed!", true);
-                }
-                me.logResponse("URL Audit Results:" , respText);
-
-                resolve("startMalwareTest Complete!");
-
-            }catch(e){
-                reject("startMalwareTest failed!");
-            }
-        }
-
-        me.initAudit(me.apiUriMalware, index, successCallbackMalware, chart);
     },
 
     renderSpeedTestChart: function($chartContainer){
@@ -844,13 +780,8 @@ Ext.define('SAT.view.main.MainController', {
 
     gTimeout : 5000,
 
-    cleanUpPreviousTest: function (){
-            var me = this;
-            me.deferreds = [];
-            me.results = [];
-    },
-
-    initAudit: function (apiUri, index, successCallBk, chart){
+    //step-1: gets the payload of URLS and Test Methods to audit
+    initAudit: function (apiUri, index, chart, resolve, reject){
             var me = this;
             //clear previous results...
             me.cleanUpPreviousTest();
@@ -861,17 +792,19 @@ Ext.define('SAT.view.main.MainController', {
                 dataType: "json"
             })
             .done(function(list) {
-                me.auditUrlsAndExecCallbk(list, index, successCallBk, chart);
+                me.auditUrlsAndPostResults(list, index, chart, resolve, reject);
             })
             .fail(function() {
-                alert( "error" );
+                resolve("cannot get audit payload");
+                console.log("cannot get audit payload");
             })
             .always(function() {
                 //alert( "complete" );
             });
-        },
+    },
 
-    auditUrlsAndExecCallbk: function (list, index, successCallBk, chart){
+    //step-2: loops thro the list of payload URLs with its corresponding Methods
+    auditUrlsAndPostResults: function (list, index, chart, resolve, reject){
             var me = this;
             //wait spinner .....
             me.logResponse("Audit status", "Loading and testing " + list.length + " URLs...please wait..... <img class='clsRowSpinner' src='../resources/images/loading.gif'>");
@@ -899,9 +832,60 @@ Ext.define('SAT.view.main.MainController', {
             // check if all ajax calls have finished
             $.when.apply($, me.deferreds)
                     .done(function() {
-                        console.log(me.results);
-                        successCallBk.call(this);
+                        //POST all the data gathered for server to process
+                        me.postAuditResults(index, resolve, reject);
+                        me.logResponse("URL Audit Results:" ,  me.results);
                     });//end:done
+        },
+
+    //step-3: POST all the data gathered to server for processing
+    //gets Returned the final Audit status
+    postAuditResults: function (index, resolve, reject){
+            var me = this,
+                auditType = me.getAuditType(index),
+                results = me.results,
+                postResultsData = [];
+
+            //collect data to POST to server
+             $.each(results, function(index, resp){
+                    var urlInfo = {};
+                    urlInfo.auditUrl = resp.url;
+                    urlInfo.auditType = auditType;
+                    urlInfo.xhrResponse =  me.parseAjaxResp(resp);
+                    urlInfo.xhrHeaders = me.dumpHeaders(resp);
+                    postResultsData.push(urlInfo);
+             });
+
+             //POST data
+             console.log(JSON.stringify(postResultsData));
+/*          //TODO: Re-enable after CSI server POST is enabled
+            $.ajax({
+                url: me.apiPostAuditResults,
+                method: "POST",
+                data: JSON.stringify(postResultsData)
+            })*/
+            $.ajax({
+                url: me.apiPostAuditResults,
+                method: "GET"
+            })
+            .done(function(data) {
+                var auditStatus = (data.status || "Unable to Audit!");
+
+                //update Audit final status
+                me.displayAuditStatus(index, auditStatus, false);
+
+                //resolve the Audit
+                resolve(auditType + ": Audit-Test both phase Success!");
+                console.log(auditType + ": Audit-Test both phase Success!");
+            })
+            .fail(function() {
+                //reject the Audit
+                reject(auditType + ": Audit-Test Failed!");
+                console.log(auditType + ": Audit-Test Failed!");
+            })
+            .always(function() {
+                //clean-up
+            });
         },
 
     doCors: function (url, index, dObject, list, chart) {
@@ -993,47 +977,6 @@ Ext.define('SAT.view.main.MainController', {
             console.log("completedUrlsPercentage= " + completedUrlsPercentage);
         },
 
-    postAuditResults: function (index, resolve, reject){
-            var me = this,
-                results = me.results,
-                postResultsData = [];
-
-            //collect data to POST to server
-             $.each(results, function(index, resp){
-                    var urlInfo = {};
-                    urlInfo.url = resp.url;
-                    urlInfo.xhrResponse =  me.parseAjaxResp(resp);
-                    urlInfo.xhrHeaders = me.dumpHeaders(resp);
-                    postResultsData.push(urlInfo);
-             });
-
-/*              //TODO: Re-enable after CSI server POST is enabled
-                $.ajax({
-                    url: me.apiPostAuditResults,
-                    method: "POST",
-                    data: JSON.stringify(postResultsData)
-                })*/
-                $.ajax({
-                    url: me.apiPostAuditResults,
-                    method: "GET"
-                })
-                .done(function(data) {
-                    var auditStatus = (data.status || "Unable to Audit!")
-                    //update Audit final result
-                    me.displayAuditStatus(index, auditStatus, false);
-
-                    console.log(postResultsData);
-                    resolve("Bot-Test both phase Success!");
-                })
-                .fail(function() {
-                    //alert( "error" );
-                    reject("Bot-Test Failed!");
-                })
-                .always(function() {
-                    //alert( "complete" );
-                });
-        },
-
     logResponse: function (hdr, msg, isObject){
             var msgTxt = msg;
             if(isObject){
@@ -1046,10 +989,10 @@ Ext.define('SAT.view.main.MainController', {
         },
 
     parseAjaxResp: function (resp){
-            var msg = "";
+            var msg = "", maxResponseTextLength = 100;
             //msg += "|URL:" + resp.url || "";
             msg += "|readyState:" + resp.readyState;
-            //msg += "|responseText:" + ($('<div/>').html(resp.responseText).text() || "none");
+            //msg += "|responseText:" + (resp.responseText ? (resp.responseText.substring(0, maxResponseTextLength)) : "none");
             msg += "|status:" + resp.status;
             msg += "|statusText:" + resp.statusText;
             //msg += "|responseText:" + (resp.responseText || "none");
@@ -1081,6 +1024,41 @@ Ext.define('SAT.view.main.MainController', {
     displayAuditStatus: function(auditIndex, displayString, blnPass){
          var row = Ext.query('.results-grid .x-grid-row')[auditIndex];
              $(row).find(".result-pass").text(displayString);
+    },
+    getAuditType: function(auditIndex){
+        var auditType= "";
+            switch(auditIndex) {
+                case 0:
+                    auditType = "speedtest";
+                    break;
+                case 1:
+                    auditType = "offensive";
+                    break;
+                case 2:
+                    auditType = "malware";
+                    break;
+                case 3:
+                    auditType = "adware";
+                    break;
+                case 4:
+                    auditType = "phishing";
+                    break;
+                case 5:
+                    auditType = "filteravoidance";
+                    break;
+                case 6:
+                    auditType = "sslvulnerability";
+                    break;
+                default:
+                    break;
+            }
+        return auditType;
+    },
+
+    cleanUpPreviousTest: function (){
+            var me = this;
+            me.deferreds = [];
+            me.results = [];
     }
 
 });
