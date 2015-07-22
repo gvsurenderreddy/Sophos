@@ -62,7 +62,7 @@ $(document).ready(function () { //jQuery on ready
     3. Display Table: URL, Method, Duration, XHR Response, XHR Headers, Response HTML
     */
     var apiPostAuditResults = "../data/analyzedresults.json"; //replace with REST URI
-    var apiUriBot = "../data/urllist.json"; //replace with REST URI
+    var apiUriBot = "../data/urllist-testpage.json"; //replace with REST URI
     var apiUriSsl = "../data/urllistssl.json"; //replace with REST URI
     var deferreds = [];
     var results = [];
@@ -154,9 +154,6 @@ $(document).ready(function () { //jQuery on ready
 
     function auditUrlsAndDisplayResults(list, successCallBk, blnAppendUrls){
 
-        //wait spinner .....
-        logResponse("Audit status", "Loading and testing " + list.length + " URLs...please wait..... <img class='clsRowSpinner' src='../resources/images/loading.gif'>");
-
         if(blnAppendUrls){
             var additionalUrls = eval(getUrls());
             //add additional URLS
@@ -164,6 +161,11 @@ $(document).ready(function () { //jQuery on ready
                 list = list.concat(additionalUrls);
             }
         }
+
+        //wait spinner .....
+        logResponse("Audit status", "Loading and testing " + list.length + " URLs...please wait..... <img class='clsRowSpinner' src='../resources/images/loading.gif'>");
+
+
         var i;
         for(i = 0; i < list.length; i++) {
             var url = list[i].url,

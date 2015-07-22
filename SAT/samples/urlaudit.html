@@ -38,27 +38,7 @@
                 $("#JSONPTest").on("click", function(){
                     var arrUrls = getUrls();
                     $.each(arrUrls, function(index, url){
-                            try{
-                            		// Example URLs with JSONP support
-                            		// https://graph.facebook.com/?ids=http://www.stackoverflow.com
-                            		// https://jsonp.afeld.me/?callback=?&url=http://jsonview.com/example.json
-                            		
-                                    $.ajax({
-                                        url: url,
-                                        jsonp: "callback",
-                                        dataType: "jsonp",
-                                        // Work with the response
-                                        success: function( response, textStatus, jqXHR ) {
-                                            logResponse("JSONP Test", '<b>' + url + '</b> returns ' + JSON.stringify(response)); // server response
-                                        },
-                                        error: function(jqXHR, textStatus, errorThrown) {
-                                            logResponse("JSONP Test Error", '<b>' + url + '</b> returns ' + textStatus); // error
-                                        }
-                                    });//end ajax
-                            }
-                            catch(e){
-                               logResponse("Exception", e);
-                            }
+                            doJsonp(url);
                     });//$.each
                });
 
@@ -95,52 +75,7 @@
                 $("#CORSTest").on("click", function(){
                     var arrUrls = getUrls();
                     $.each(arrUrls, function(index, url){
-                            try{
-                                   var xhr = new XMLHttpRequest(),
-                                        method = "GET";
-                                      if ("withCredentials" in xhr) {
-
-                                        // Check if the XMLHttpRequest object has a "withCredentials" property.
-                                        // "withCredentials" only exists on XMLHTTPRequest2 objects.
-                                        xhr.open(method, url, true);
-
-                                      } else if (typeof XDomainRequest != "undefined") {
-
-                                        // Otherwise, check if XDomainRequest.
-                                        // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
-                                        xhr = new XDomainRequest();
-                                        xhr.open(method, url);
-
-                                      } else {
-
-                                        // Otherwise, CORS is not supported by the browser.
-                                        logResponse("CORS-Test", "CORS is not supported by the browser");
-
-                                      }
-
-                                      //event handlers
-                                      xhr.onload = function() {
-                                             var responseText = xhr.responseText;
-                                             logResponse("CORS-Test", responseText);
-                                             // process the response.
-
-											 // dump the response headers
-											 dumpHeaders(xhr);
-                                      };
-
-                                      xhr.onabort = function(XMLHttpRequestProgressEvent) {
-                                          logResponse("CORS-Test-Abort", XMLHttpRequestProgressEvent, true);
-                                      };
-
-                                     xhr.onerror = function(XMLHttpRequestProgressEvent) {
-                                          logResponse("CORS-Test-Error", XMLHttpRequestProgressEvent, true);
-                                      };
-
-                                      xhr.send();
-                            }
-                            catch(e){
-                               logResponse("Exception", e);
-                            }
+                            doCors(url);
                     });//$.each
                });
                 //-------------------------- image --------------------------------//
@@ -205,6 +140,78 @@
                 //-------------------------- MessageChannel--------------------------------//
 
                 //---------------------------- helpers ------------------------------------//
+
+              function doCors(url) {
+                    var me = this;
+                    //var xdata = {json: $.toJSON({name: number}), delay: 1};
+                    try{
+                        $.ajax({
+                            url:url,
+                            timerStart: new Date().getTime(),
+                            timeout: 5000,
+                            type: "GET",
+                            contentType: 'text/plain',
+                            crossDomain: true,
+                            xhrFields: {
+                                // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
+                                // This can be used to set the 'withCredentials' property.
+                                // Set the value to 'true' if you'd like to pass cookies to the server.
+                                // If this is enabled, your server must respond with the header
+                                // 'Access-Control-Allow-Credentials: true'.
+                                withCredentials: false
+                            },
+                            headers: {
+                                // Set any custom headers here.
+                                // If you set any non-simple headers, your server must include these
+                                // headers in the 'Access-Control-Allow-Headers' response header.
+                            },
+                            complete: function(jqXHR, textStatus) {
+                                     var responseText = (jqXHR.responseText || textStatus);
+                                     logResponse("CORS-Test", responseText);
+                                     // process the response.
+
+                                     // dump the response headers
+                                     dumpHeaders(jqXHR);
+                            }
+                        });//end ajax
+                    }
+                    catch(e){
+                        logResponse("Exception:doCors", e);
+                    }
+
+              }
+              //---------------//
+
+              function doJsonp (url){
+                var me = this;
+                try{
+                    // Example URLs with JSONP support
+                    // https://graph.facebook.com/?ids=http://www.stackoverflow.com
+                    // https://jsonp.afeld.me/?callback=?&url=http://jsonview.com/example.json
+
+                    $.ajax({
+                        url: url,
+                        timeout: me.gTimeout,
+                        timerStart: new Date().getTime(),
+                        jsonp: "callback",
+                        dataType: "jsonp",
+                        // Work with the response
+                        complete: function(jqXHR, textStatus) {
+                                 var responseText = (jqXHR.responseText || textStatus);
+                                 logResponse("JSONP-Test", responseText);
+                                 // process the response.
+
+                                 // dump the response headers
+                                 dumpHeaders(jqXHR);
+                        }
+                    });//end ajax
+                }
+                catch(e){
+                    logResponse("Exception", e);
+                }
+            }
+        //----------------//
+
                 $("#clearResults").on("click", function (){
                     $("#response").empty();
                     $("iframe").remove()
@@ -320,9 +327,9 @@
 
         <div class="panel panel-default" id="toolbar" style="border-width: 0px; margin: 10px;">
             Test using:&nbsp;
+            <button class="btn btn-primary"  id="CORSTest">CORS</button>
             <button class="btn btn-primary" id="JSONPTest">JSONP</button>
             <button class="btn btn-primary"  id="ajaxTest">Ajax</button>
-            <button class="btn btn-primary"  id="CORSTest">CORS</button>
             <button class="btn btn-primary"  id="imageTest">Image Download</button>
             <button class="btn btn-primary"  id="iframeTest">iFrame</button>
 
