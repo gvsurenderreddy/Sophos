@@ -181,6 +181,9 @@ $(document).ready(function () { //jQuery on ready
                 case "JSONP":
                     doJsonp(url, dObject, list);
                     break;
+                case "IMG":
+                    doImg(url, dObject, list);
+                    break;
                 default:
                     break;
             }
@@ -260,6 +263,44 @@ $(document).ready(function () { //jQuery on ready
                     updateProgressPercentage(list);
                 }
             });//end ajax
+        }
+        catch(e){
+            logResponse("Exception", e);
+        }
+    }
+
+    function doImg(url, dObject, list){
+        var me = this;
+        try{
+            var imgHandler =
+            function(event){
+                    var imgLoadStatus = "img-error";//default to error
+                    if(event.type == "load"){//img-loaded
+                        var imgWidth = img.naturalWidth,
+                            imgHeight = img.naturalHeight;
+                        //only if the img has either a height OR width, its a success
+                        if(imgWidth > 0 || imgHeight > 0){
+                            imgLoadStatus = "img-loaded";
+                        }
+                    }
+                    event.url = url;
+                    event.method = "IMG";
+                    event.status = imgLoadStatus;
+
+                    results.push(event);
+                    dObject.resolve();
+
+                    updateProgressPercentage(list);
+
+            }//end-handler
+
+            var img = new Image();
+            img.onload = imgHandler;
+            img.onerror = imgHandler;
+
+            //img.src = url + '/onethatdoesnotexist.gif';
+            url = url + '/favicon.ico';
+            img.src = url;
         }
         catch(e){
             logResponse("Exception", e);
@@ -362,7 +403,7 @@ $(document).ready(function () { //jQuery on ready
 <div id="main">
 
     <label>Append to Test URLs (maintain format):</label>
-    <textarea class="panel panel-default" id="urllist" style="width:100%;height:100px;">[{"url": "http://www.ping.com","method": "CORS"},{"url": "http://www.pong.com","method": "JSONP"}]
+    <textarea class="panel panel-default" id="urllist" style="width:100%;height:100px;">[{"url": "http://www.ping.com","method": "CORS"}, {"url": "http://www.ping.com","method": "IMG"}, {"url": "http://www.pong.com","method": "JSONP"}]
     </textarea>
 
     <!--<input type="text" id="sslurl" value="https://ec2-52-8-200-90.us-west-1.compute.amazonaws.com:10443/a/check"/>-->

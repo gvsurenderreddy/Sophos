@@ -83,22 +83,39 @@
                         var arrUrls = getUrls();
                         $.each(arrUrls, function(index, url){
                             try{
+                                    var imgHandler =
+                                    function(event){
+                                            var imgLoadStatus = "Image Test-Err";//default to error
+                                            if(event.type == "load"){//img-loaded
+                                                var imgWidth = img.naturalWidth,
+                                                    imgHeight = img.naturalHeight;
+                                                //only if the img has either a height OR width, its a success
+                                                if(imgWidth > 0 || imgHeight > 0){
+                                                    imgLoadStatus = "Image Test-Loaded";
+                                                }
+                                            }
+                                            event.url = url;
+                                            event.status = imgLoadStatus;
+
+                                            logResponse(imgLoadStatus, event, true);
+                                       	    //dumpImgInfo(img);
+
+                                    }//end-handler
+
+
+
                                    var img = new Image();
-                                   img.onload = function (event) {
-                                        logResponse("Image Test-Loaded", event, true);
-                                       	dumpImgInfo(this);
-                                   };
-                                   img.onerror = function (event) {
-                                        logResponse("Image Test-Err", event, true);
-                                       	dumpImgInfo(this);
-                                    };
-                                   //img.src = url + '/onethatdoesnotexist.gif';
-                                   img.src = url + '/favicon.ico';
+                                   img.onload = imgHandler;
+                                   img.onerror = imgHandler;
+
+                                    //img.src = url + '/onethatdoesnotexist.gif';
+                                    url = url + '/favicon.ico';
+                                    img.src = url;
                             }
                             catch(e){
                                logResponse("Exception", e);
                             }
-                        });
+                         });
                });
                //--------------------------- iframe ------------------------------------------//
               $("#iframeTest").on("click", function(){

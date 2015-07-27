@@ -554,7 +554,7 @@ Ext.define('SAT.view.main.MainController', {
                 switch(index) {
                     case 0://speed-test
                         me.startSpeedTest(index, resolve, reject, chart);
-                        //resolve("Temp-Done");
+                        //resolve("Temp-Done"); //localhost
                         break;
                     case 1://offensive
                     case 3://adware
@@ -824,6 +824,9 @@ Ext.define('SAT.view.main.MainController', {
                     case "JSONP":
                         me.doJsonp(url, index, dObject, list, chart);
                         break;
+                    case "IMG":
+                        me.doImg(url, index, dObject, list, chart);
+                        break;
                     default:
                         break;
                 }
@@ -858,7 +861,8 @@ Ext.define('SAT.view.main.MainController', {
 
              //POST data
              console.log(JSON.stringify(postResultsData));
-/*          //TODO: Re-enable after CSI server POST is enabled
+          //TODO: Re-enable after CSI server POST is enabled
+/*         //localhost
             $.ajax({
                 url: me.apiPostAuditResults,
                 method: "POST",
@@ -965,6 +969,38 @@ Ext.define('SAT.view.main.MainController', {
             }
         },
 
+    doImg: function(url, index, dObject, list, chart){
+        var me = this;
+        try{
+            var imgHandler =
+            function(event){
+                    var imgLoadStatus = "img-error";//default to error
+                    if(event.type == "load"){//img-loaded
+                        var imgWidth = img.naturalWidth,
+                            imgHeight = img.naturalHeight;
+                        //only if the img has either a height OR width, its a success
+                        if(imgWidth > 0 || imgHeight > 0){
+                            imgLoadStatus = "img-loaded";
+                        }
+                    }
+                    event.url = url;
+                    event.status = imgLoadStatus;
+                    me.results.push(event);
+                    dObject.resolve();
+            }//end-handler
+
+            var img = new Image();
+            img.onload = imgHandler;
+            img.onerror = imgHandler;
+
+            //img.src = url + '/onethatdoesnotexist.gif';
+            url = url + '/favicon.ico';
+            img.src = url;
+        }
+        catch(e){
+            logResponse("Exception", e);
+        }
+    },
     updateProgressPercentage: function(list, index, chart){
             var me = this,
                 totalUrls = list.length,
@@ -1019,6 +1055,15 @@ Ext.define('SAT.view.main.MainController', {
                     msg += 'No visible response header found';
                 }
             }
+            else {
+                if(_.isObject(xhr)){
+                    for (var p in xhr) {
+                        if (xhr.hasOwnProperty(p)) {
+                            msg += p + '=' + xhr[p] + '|';
+                        }
+                    }
+                }
+             }
             return msg;
     },
     displayAuditStatus: function(auditIndex, displayString, blnPass){
