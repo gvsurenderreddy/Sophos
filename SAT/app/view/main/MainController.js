@@ -560,13 +560,13 @@ Ext.define('SAT.view.main.MainController', {
                     case 3://adware
                     case 4://phishing
                     case 5://filter-avoidance
-                         me.initAudit(me.apiUriBot, index, chart, resolve, reject);
+                         me.initAudit(index, chart, resolve, reject);
                         break;
                     case 2://malware
-                        me.initAudit(me.apiUriMalware, index, chart, resolve, reject);
+                        me.initAudit(index, chart, resolve, reject);
                         break;
                     case 6://ssl
-                        me.initAudit(me.apiUriSsl, index, chart, resolve, reject);
+                        me.initAudit(index, chart, resolve, reject);
                         break;
                     default://make fake data, for testing
                         var timesRun = 0;
@@ -590,15 +590,6 @@ Ext.define('SAT.view.main.MainController', {
     },
 
     //-----------------------------------------------------------------------------------------------------------//
-    getSpeedTestConfig: function(){
-            // TODO: move to config
-            var config = {};
-
-            config.account = "SOM55a3d468ce033"; //your API Key here
-            config.domainName = "52.8.200.90"; //"localhost:63342";//your domain or sub-domain here
-
-            return config;
-        },
 
     startSpeedTest: function(index, resolve, reject, chart){
         var me = this,
@@ -766,13 +757,13 @@ Ext.define('SAT.view.main.MainController', {
                 });//end-hc
     },
 
-    apiPostAuditResults : "data/analyzedresults.json", //replace with REST URI
+    //apiPostAuditResults : "data/analyzedresults.json", //replace with REST URI
 
-    apiUriBot : "data/urllist.json", //replace with REST URI
+    //apiUriBot : "data/urllist.json", //replace with REST URI
 
-    apiUriSsl : "data/urllistssl.json", //replace with REST URI
+    //apiUriSsl : "data/urllistssl.json", //replace with REST URI
 
-    apiUriMalware : "data/urlmalware.json", //replace with REST URI
+    //apiUriMalware : "data/urlmalware.json", //replace with REST URI
 
     deferreds : [],
 
@@ -781,13 +772,14 @@ Ext.define('SAT.view.main.MainController', {
     gTimeout : 5000,
 
     //step-1: gets the payload of URLS and Test Methods to audit
-    initAudit: function (apiUri, index, chart, resolve, reject){
-            var me = this;
+    initAudit: function (index, chart, resolve, reject){
+            var me = this,
+                auditInfo = me.getAuditInfo(index);
             //clear previous results...
             me.cleanUpPreviousTest();
 
             $.ajax({
-                url: apiUri,
+                url: auditInfo.uriGetList,
                 method: "GET",
                 dataType: "json"
             })
@@ -845,7 +837,8 @@ Ext.define('SAT.view.main.MainController', {
     //gets Returned the final Audit status
     postAuditResults: function (index, resolve, reject){
             var me = this,
-                auditType = me.getAuditType(index),
+                auditInfo = me.getAuditInfo(index),
+                auditType = auditInfo.auditType,
                 results = me.results,
                 postResultsData = [];
 
@@ -862,14 +855,13 @@ Ext.define('SAT.view.main.MainController', {
              //POST data
              console.log(JSON.stringify(postResultsData));
           //TODO: Re-enable after CSI server POST is enabled
-/*         //localhost
-            $.ajax({
-                url: me.apiPostAuditResults,
+/*            $.ajax({
+                url: auditInfo.uriPostResult,
                 method: "POST",
                 data: JSON.stringify(postResultsData)
             })*/
             $.ajax({
-                url: me.apiPostAuditResults,
+                url: auditInfo.uriPostResult,
                 method: "GET"
             })
             .done(function(data) {
@@ -1001,6 +993,7 @@ Ext.define('SAT.view.main.MainController', {
             logResponse("Exception", e);
         }
     },
+
     updateProgressPercentage: function(list, index, chart){
             var me = this,
                 totalUrls = list.length,
@@ -1066,44 +1059,72 @@ Ext.define('SAT.view.main.MainController', {
              }
             return msg;
     },
+
     displayAuditStatus: function(auditIndex, displayString, blnPass){
          var row = Ext.query('.results-grid .x-grid-row')[auditIndex];
              $(row).find(".result-pass").text(displayString);
-    },
-    getAuditType: function(auditIndex){
-        var auditType= "";
-            switch(auditIndex) {
-                case 0:
-                    auditType = "speedtest";
-                    break;
-                case 1:
-                    auditType = "offensive";
-                    break;
-                case 2:
-                    auditType = "malware";
-                    break;
-                case 3:
-                    auditType = "adware";
-                    break;
-                case 4:
-                    auditType = "phishing";
-                    break;
-                case 5:
-                    auditType = "filteravoidance";
-                    break;
-                case 6:
-                    auditType = "sslvulnerability";
-                    break;
-                default:
-                    break;
-            }
-        return auditType;
     },
 
     cleanUpPreviousTest: function (){
             var me = this;
             me.deferreds = [];
             me.results = [];
+    },
+
+    //TODO: //replace "auditInfo.uriGetList" and "auditInfo.uriPostResult" with REST URI";
+    // TODO: move to config
+    getAuditInfo: function(auditIndex){
+        var auditInfo = {};
+            switch(auditIndex) {
+                case 0:
+                    auditInfo.auditType = "speedtest";
+                    auditInfo.uriGetList = ""; //NA
+                    auditInfo.uriPostResult = ""; //NA
+                    break;
+                case 1:
+                    auditInfo.auditType = "offensive";
+                    auditInfo.uriGetList = "data/urllist.json";
+                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    break;
+                case 2:
+                    auditInfo.auditType = "malware";
+                    auditInfo.uriGetList = "data/urllistssl.json";
+                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    break;
+                case 3:
+                    auditInfo.auditType = "adware";
+                    auditInfo.uriGetList = "data/urllist.json";
+                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    break;
+                case 4:
+                    auditInfo.auditType = "phishing";
+                    auditInfo.uriGetList = "data/urllist.json";
+                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    break;
+                case 5:
+                    auditInfo.auditType = "filteravoidance";
+                    auditInfo.uriGetList = "data/urllist.json";
+                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    break;
+                case 6:
+                    auditInfo.auditType = "sslvulnerability";
+                    auditInfo.uriGetList = "data/urllistssl.json";
+                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    break;
+                default:
+                    break;
+            }
+        return auditInfo;
+    },
+
+    // TODO: move to config
+    getSpeedTestConfig: function(){
+            var config = {};
+
+            config.account = "SOM55a3d468ce033"; //your API Key here
+            config.domainName = "52.8.200.90"; //"labs.example.com" your domain or sub-domain here
+
+            return config;
     }
 
 });
