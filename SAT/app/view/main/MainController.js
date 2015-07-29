@@ -595,7 +595,7 @@ Ext.define('SAT.view.main.MainController', {
             var config = {};
 
             config.account = "SOM55a3d468ce033"; //your API Key here
-            config.domainName = "crowbarsecurity.azurewebsites.net"; //"localhost:63342";//your domain or sub-domain here
+            config.domainName = "52.8.200.90"; //"localhost:63342";//your domain or sub-domain here
 
             return config;
         },

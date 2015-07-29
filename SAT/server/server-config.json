@@ -17,6 +17,6 @@
         "AccessControlAllowCredentials": true,
         "AccessControlMaxAge": 3600,
         "server": "localhost",
-        "port": "3000"
+        "port": "80"
     }
 }
