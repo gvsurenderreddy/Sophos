@@ -1122,7 +1122,7 @@ Ext.define('SAT.view.main.MainController', {
             var config = {};
 
             config.account = "SOM55a3d468ce033"; //your API Key here
-            config.domainName = "52.8.200.90"; //"labs.example.com" your domain or sub-domain here
+            config.domainName = "crowbarsecurityinc.com"; //"labs.example.com" your domain or sub-domain here
 
             return config;
     }
