@@ -7,7 +7,8 @@ if(!global['App']){
 var express = require('express'),
     nconf = require('nconf'),
     http = require('http'),
-    path = require('path');
+    path = require('path'),
+    router = require('./app/router.js');
 
 nconf.env().file({ file: 'server-config.json'});
 
@@ -72,6 +73,8 @@ app.configure('production', function(){
     app.use(express.errorHandler());
     global.App.mode = 'production';
 });
+
+router.init(app);
 
 server = http.createServer(app).listen(app.get('port'), function(){
     console.log("Express server listening on port %d in %s mode", app.get('port'), app.settings.env);

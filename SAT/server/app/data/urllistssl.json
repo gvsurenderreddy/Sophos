@@ -1,0 +1,6 @@
+[
+    {
+        "url": "https://ec2-52-8-200-90.us-west-1.compute.amazonaws.com:10443/a/check",
+        "method": "CORS"
+    }
+]
