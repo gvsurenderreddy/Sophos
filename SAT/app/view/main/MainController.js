@@ -855,15 +855,15 @@ Ext.define('SAT.view.main.MainController', {
              //POST data
              console.log(JSON.stringify(postResultsData));
           //TODO: Re-enable after CSI server POST is enabled
-/*            $.ajax({
+            $.ajax({
                 url: auditInfo.uriPostResult,
                 method: "POST",
                 data: JSON.stringify(postResultsData)
-            })*/
-            $.ajax({
+            })
+/*            $.ajax({
                 url: auditInfo.uriPostResult,
                 method: "GET"
-            })
+            })*/
             .done(function(data) {
                 var auditStatus = (data.status || "Unable to Audit!");
 
@@ -966,13 +966,13 @@ Ext.define('SAT.view.main.MainController', {
         try{
             var imgHandler =
             function(event){
-                    var imgLoadStatus = "img-error";//default to error
+                    var imgLoadStatus = "error";//default to error
                     if(event.type == "load"){//img-loaded
                         var imgWidth = img.naturalWidth,
                             imgHeight = img.naturalHeight;
                         //only if the img has either a height OR width, its a success
                         if(imgWidth > 0 || imgHeight > 0){
-                            imgLoadStatus = "img-loaded";
+                            imgLoadStatus = "success";
                         }
                     }
                     event.url = url;
@@ -1083,33 +1083,33 @@ Ext.define('SAT.view.main.MainController', {
                     break;
                 case 1:
                     auditInfo.auditType = "offensive";
-                    auditInfo.uriGetList = "data/urllist.json";
-                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    auditInfo.uriGetList = "urlList";
+                    auditInfo.uriPostResult = "results";
                     break;
                 case 2:
                     auditInfo.auditType = "malware";
-                    auditInfo.uriGetList = "data/urllistssl.json";
-                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    auditInfo.uriGetList = "urlMalwareList";
+                    auditInfo.uriPostResult = "results";
                     break;
                 case 3:
                     auditInfo.auditType = "adware";
-                    auditInfo.uriGetList = "data/urllist.json";
-                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    auditInfo.uriGetList = "urlList";
+                    auditInfo.uriPostResult = "results";
                     break;
                 case 4:
                     auditInfo.auditType = "phishing";
-                    auditInfo.uriGetList = "data/urllist.json";
-                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    auditInfo.uriGetList = "urlList";
+                    auditInfo.uriPostResult = "results";
                     break;
                 case 5:
                     auditInfo.auditType = "filteravoidance";
-                    auditInfo.uriGetList = "data/urllist.json";
-                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    auditInfo.uriGetList = "urlList";
+                    auditInfo.uriPostResult = "results";
                     break;
                 case 6:
                     auditInfo.auditType = "sslvulnerability";
-                    auditInfo.uriGetList = "data/urllistssl.json";
-                    auditInfo.uriPostResult = "data/analyzedresults.json";
+                    auditInfo.uriGetList = "urlSSLList";
+                    auditInfo.uriPostResult = "results";
                     break;
                 default:
                     break;

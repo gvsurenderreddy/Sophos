@@ -4,10 +4,7 @@ var Audit = {
     getBotURLS: function(req, res) {
         fs.readFile(__dirname+'/../data/urllist.json', 'utf8', function(err, data){
             if(err) throw err;
-            res.send({
-                success: true,
-                data: JSON.parse(data)
-            });
+            res.send(JSON.parse(data));
 
         });
     },
@@ -15,10 +12,7 @@ var Audit = {
     getSSLList: function(req, res) {
         fs.readFile(__dirname+'/../data/urllistssl.json', 'utf8', function(err, data){
             if(err) throw err;
-            res.send({
-                success: true,
-                data: JSON.parse(data)
-            });
+            res.send(JSON.parse(data));
 
         });
     },
@@ -26,10 +20,7 @@ var Audit = {
     getMalwareList: function(req, res) {
         fs.readFile(__dirname+'/../data/urlmalware.json', 'utf8', function(err, data){
             if(err) throw err;
-            res.send({
-                success: true,
-                data: JSON.parse(data)
-            });
+            res.send(JSON.parse(data));
 
         });
     },
@@ -37,10 +28,7 @@ var Audit = {
     getResult: function(req, res) {
         fs.readFile(__dirname+'/../data/analyzedresults.json', 'utf8', function(err, data){
             if(err) throw err;
-            res.send({
-                success: true,
-                data: JSON.parse(data)
-            });
+            res.send(JSON.parse(data));
 
         });
     }
