@@ -23,7 +23,8 @@ Ext.define('SAT.view.main.MainController', {
     listen: {
         component: {
             '[itemId=results-grid]': {
-                itemclick: 'onResultsItemClick'
+                itemclick: 'onResultsItemClick',
+                 afterrender: 'onAfterRenderResultsGrid'
             }
         }
     },
@@ -164,7 +165,7 @@ Ext.define('SAT.view.main.MainController', {
 //                                "<input type='button' class='rerun' value='Rerun Test' style='display:none;background: #007ac6; border-radius: 5px; width: 80px; color: #fff; font-size: 10px;'>"+
 //                            "</td>" +
                             "<td>"+
-                                "<a href='#details' class='view-details' style='display:none;font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
+                                "<div class='view-details-container'><a href='#details' class='view-details' style='display:none;font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a></div>"+
                             "</td>"+
                         "</tr>"+
                     "</table>"+
@@ -194,7 +195,7 @@ Ext.define('SAT.view.main.MainController', {
 //                            "<input type='button' class='rerun' value='Rerun Test' style= 'display:none;background: #007ac6; border-radius: 5px; width: 80px; color: #fff; font-size: 10px;'>"+
 //                        "</td>" +
                         "<td>"+
-                            "<a href='#details' class='view-details' style='display:none;font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a>"+
+                            "<div class='view-details-container'><a href='#details' class='view-details' style='display:none;font-family: Flama-Basic; font-weight: 300; text-decoration: none; color:#0171B9;'>View Details</a></div>"+
                         "</td>"+
                     "</tr>"+
                     "</table>"+
@@ -1125,6 +1126,62 @@ Ext.define('SAT.view.main.MainController', {
             config.domainName = "crowbarsecurityinc.com"; //"labs.example.com" your domain or sub-domain here
 
             return config;
-    }
+    },
 
+   onAfterRenderResultsGrid: function(){
+        // Setup an event listener to make an API call once auth is complete
+        function onLinkedInLoad() {
+            IN.Event.on(IN, "auth", getProfileData);
+        }
+
+        // Handle the successful return from the API call
+        function onSuccess(data) {
+            console.log(data);
+            var userData = data.values || [],
+                userInfoHtml = "";
+
+            if(userData.length > 0){
+                userData = userData[0];
+                userInfoHtml = "Welcome,&nbsp;" + userData.firstName + "&nbsp;" + userData.lastName;
+            }
+
+            $(".logged-in-msg").html(userInfoHtml);
+        }
+
+        // Handle an error response from the API call
+        function onError(error) {
+            console.log(error);
+        }
+
+        // Use the API call wrapper to request the member's basic profile data
+        function getProfileData() {
+            //IN.API.Raw("/people/~").result(onSuccess).error(onError);
+
+            IN.API.Profile("me").fields("first-name", "last-name", "maiden-name", "email-address", "phone-numbers", "location")
+                .result(onSuccess)
+                .error(onError);
+        }
+
+       function login(){
+            /*
+            if(IN.User.isAuthorized()){//already logged-in
+                getProfileData();
+            }else{//init login
+                IN.User.authorize();
+            }*/
+
+             IN.User.authorize();
+        }
+
+        function logout(){
+            IN.User.logout();
+        }
+
+        $(".results-grid").on("click", ".view-details-container", function(){
+            login();
+        });
+
+        // Setup an event listener to make an API call once auth is complete
+        onLinkedInLoad();
+    }
 });

@@ -44,10 +44,28 @@ Ext.define('SAT.view.main.Main', {
         title: '&nbsp;',
         items: [
             {
-                xtype: 'image',
-                src: 'resources/images/logo2.png',
-                autoEl: 'div',
-                height: 60
+                xtype: 'fieldcontainer',
+                width: 825,
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
+                },
+                items: [
+                    {
+                        xtype: 'image',
+                        src: 'resources/images/logo2.png',
+                        autoEl: 'div',
+                        width: 375,
+                        height: 60
+                    },
+                    {
+                         xtype: 'component',
+                         flex: 1,
+                         cls: "logged-in-msg",
+                         style: "text-align: right; padding-top: 20px;",
+                         html: ""
+                    }
+                ]
             },
             {
                 xtype: 'fieldcontainer',
