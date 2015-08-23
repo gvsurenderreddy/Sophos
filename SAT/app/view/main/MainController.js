@@ -134,9 +134,9 @@ Ext.define('SAT.view.main.MainController', {
                 "<div class='gridContent'>" +
                     "<div class='top-div'>"+
 //                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
-                        "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
+                        "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400; height: 30px; top: 5px; position: relative;'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -3px; background-color:lightgreen; text-align: center; color:darkgreen; font-weight: 600; width:80px; height: 18px; display: none''>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: 0px; text-align: center; color:darkgreen; font-weight: 600; display: none;top: -5px; position: relative;'></div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
@@ -179,9 +179,9 @@ Ext.define('SAT.view.main.MainController', {
                 "<div class='gridContent'>" +
                     "<div class='top-div'>"+
 //                        "<div class='gridSmallIcon' style='float: left;display: none'><img src='resources/images/{smallImage}'></div>" +
-                        "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400'>{title}</div>&nbsp;&nbsp;"+
+                        "<div class='threatTitle' style='float: left; color: #0171B9; font-size: medium; font-weight: 400;height: 30px; top: 5px; position: relative;'>{title}</div>&nbsp;&nbsp;"+
 
-                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: -3px; background-color:lightgreen; text-align: center; color:darkgreen; font-weight: 600; width:80px; height: 18px; display: none''>Passed!</div>"+
+                        "<div class='result-pass' style='float: left; margin-left: 5px; margin-top: 0px; text-align: center; color:darkgreen; font-weight: 600; display: none;top: -5px; position: relative;'></div>"+
                         "<div class='result-fail' style='float: left; margin-left: 5px; background-color:#cc0000; text-align: center; color:#f5f5f5; width:80px; height: 18px; display: none'>Failed!</div>"+
                     "</div>"+
 
@@ -1063,7 +1063,14 @@ Ext.define('SAT.view.main.MainController', {
 
     displayAuditStatus: function(auditIndex, displayString, blnPass){
          var row = Ext.query('.results-grid .x-grid-row')[auditIndex];
-             $(row).find(".result-pass").text(displayString);
+             //$(row).find(".result-pass").text(displayString);
+
+         //TODO: remove after API avlb.
+         //generate random number from 10 - 100
+         var riskPercentage = (Math.floor(Math.random() * 10) + 1) * 10;
+         riskPercentage = (riskPercentage < 0 || riskPercentage > 100 ? 50 : riskPercentage);
+
+         $(row).find(".result-pass").addClass("status-meter-" + riskPercentage);
     },
 
     cleanUpPreviousTest: function (){

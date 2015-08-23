@@ -147,3 +147,51 @@ div.x-mask {
     margin-top: 6px;
     margin-left: 7px;
 }
+
+.result-pass{
+    width: 180px;
+    height: 30px;
+}
+.status-meter-0{
+    background: url("resources/images/meter.png") no-repeat 0px 0px;
+}
+
+.status-meter-10{
+     background: url("resources/images/meter.png") no-repeat 0px -30px;
+ }
+
+.status-meter-20{
+    background: url("resources/images/meter.png") no-repeat 0px -58px;
+}
+
+.status-meter-30{
+    background: url("resources/images/meter.png") no-repeat 0px -88px;
+}
+
+.status-meter-40{
+    background: url("resources/images/meter.png") no-repeat 0px -116px;
+}
+
+.status-meter-50{
+    background: url("resources/images/meter.png") no-repeat 0px -146px;
+}
+
+.status-meter-60 {
+    background: url("resources/images/meter.png") no-repeat 0px -174px;
+}
+
+.status-meter-70{
+    background: url("resources/images/meter.png") no-repeat 0px -204px;
+}
+
+.status-meter-80{
+    background: url("resources/images/meter.png") no-repeat 0px -232px;
+}
+
+.status-meter-90{
+    background: url("resources/images/meter.png") no-repeat 0px -262px;
+}
+
+.status-meter-100{
+    background: url("resources/images/meter.png") no-repeat 0px -292px;
+}
