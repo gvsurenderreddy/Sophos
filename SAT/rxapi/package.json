@@ -1,0 +1,19 @@
+{
+    "name": "rxapi",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node rxapi_server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sat-ui"
+    },
+    "dependencies": {
+        "express": "4.13.0",
+        "mongodb": "1.4.38",
+        "mongoskin": "1.4.13",
+        "body-parser": "1.13.1",
+        "node.extend": "1.1.5"
+    }
+}

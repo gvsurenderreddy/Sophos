@@ -1,0 +1,19 @@
+{
+    "name": "urlprocd",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node urlprocd.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sat-ui"
+    },
+    "dependencies": {
+        "sleep": "3.0.0",
+        "mongodb": "1.4.38",
+        "mongoskin": "1.4.13",
+        "async": "1.4.1",
+        "node.extend": "1.1.5"
+    }
+}
