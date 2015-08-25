@@ -195,3 +195,7 @@ div.x-mask {
 .status-meter-100{
     background: url("resources/images/meter.png") no-repeat 0px -292px;
 }
+
+.top-div {
+    white-space: normal;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <!-- jQuery core -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script>
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+        $( document ).ready(function() {
+            var qryParamCode = getParameterByName("code"),
+            data = {
+                    grant_type: "authorization_code",
+                    code: qryParamCode,
+                    client_id: "75vz8zw8ogfn01",
+                    redirect_uri: "http://www.crowbarsecurityinc.com/app/view/auth/linkedinresp.html",
+                    client_secret: "lXvgS0FenQSyN0cC"
+            },
+            uriLinkedInAuthToken = "https://www.linkedin.com/uas/oauth2/accessToken";
+
+            /*
+            $.ajax({
+                url: uriLinkedInAuthToken,
+                method: "POST",
+                data: data,
+                contentType : "application/x-www-form-urlencoded",
+                crossDomain: true
+            })
+            .done(function(data) {
+               console.log(arguments);
+            })
+            .fail(function() {
+                console.log(arguments);
+            })
+            .always(function() {
+                 console.log(arguments);
+            });
+            */
+
+            var xmlhttp;
+
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+                   if(xmlhttp.status == 200){
+                       console.log(xmlhttp.responseText);
+                   }
+                   else if(xmlhttp.status == 400) {
+                      alert('There was an error 400')
+                   }
+                   else {
+                       alert('something else other than 200 was returned')
+                   }
+                }
+            }
+
+            xmlhttp.open("POST", uriLinkedInAuthToken, true);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xmlhttp.send($.param(data));
+
+        });
+    </script>
+</head>
+<body>
+2
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <!-- jQuery core -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <script>
+        $( document ).ready(function() {
+            var data = {
+                response_type: "code",
+                client_id: "75vz8zw8ogfn01",
+                redirect_uri: "http://www.crowbarsecurityinc.com/app/view/auth/linkedinresp.html",
+                state: "temp1234",
+                scope: "r_basicprofile"
+            },
+            uriLinkedInAuth = "https://www.linkedin.com/uas/oauth2/authorization";
+
+            //window.location.href = uriLinkedInAuth + "?" + $.param(data);
+        });
+
+        function initLogin(){
+            console.log("initLogin");
+            //IN.User.authorize(callbackFunction, callbackScope);
+        }
+        function login(){
+            IN.User.authorize();
+        }
+
+        function logout(){
+            IN.User.logout();
+        }
+    </script>
+
+    <script type="text/javascript" src="//platform.linkedin.com/in.js">
+        api_key:   75vz8zw8ogfn01
+        onLoad: onLinkedInLoad
+        authorize:  true
+    </script>
+    <script type="text/javascript">
+
+        // Setup an event listener to make an API call once auth is complete
+        function onLinkedInLoad() {
+            //IN.Event.on(IN, "auth", getProfileData);
+        }
+
+        // Handle the successful return from the API call
+        function onSuccess(data) {
+            console.log(data);
+            var userInfoHtml = "";
+             $.each(data, function(key, val){
+                    userInfoHtml += "<div><span>" + key + ": &nbsp;</span><span>" + val + "</span></div>";
+             });
+
+            $("#userinfo").html(userInfoHtml);
+        }
+
+        // Handle an error response from the API call
+        function onError(error) {
+            console.log(error);
+        }
+
+        // Use the API call wrapper to request the member's basic profile data
+        function getProfileData() {
+            //IN.API.Raw("/people/~").result(onSuccess).error(onError);
+
+            IN.API.Profile("me").fields("first-name", "last-name", "maiden-name", "email-address", "phone-numbers", "location")
+                .result(onSuccess)
+                .error(onError);
+        }
+
+    </script>
+
+
+</head>
+<body>
+1
+<script type="in/Login">
+</script>
+
+<input type="button" onclick="login()" value="Login">
+<input type="button" onclick="logout()" value="Logout">
+
+<div id="userinfo"></div>
+</body>
+</html>
