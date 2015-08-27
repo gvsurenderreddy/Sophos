@@ -36,10 +36,12 @@ var CHECK_METHOD_IMAGE = 3;
 var IS_COMPLIANT = 1;
 var NOT_COMPLIANT = 0;
 
+// request timeout
+var HTTP_REQ_TIMEOUT = 3; //secs
+
 //////////////////////////////////////////////////////////////////////////////
 // globals
 //////////////////////////////////////////////////////////////////////////////
-var gCheckCount = 0;
 
 // open the database
 var gMyDatabase = mongoskin.db('mongodb://' + DB_HOST + ':' + DB_PORT + DB_NAME, { safe: true });
@@ -54,6 +56,9 @@ var gCheckMethods = [
 	"JSONP",
 	"IMAGE"
 ];
+
+var gCurrentReq = null;
+var gLastPendingReq = null;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Busy handling
@@ -79,7 +84,7 @@ function isBusy()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // cmplCORSComplianceCB - callback function for CORS check result
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-function cmplCORSComplianceCB(error, collname, id, urlStr, statusCode, headers, result, cbContext)
+function cmplCORSComplianceCB(error, urlArray, collname, id, urlStr, statusCode, headers, result, cbContext)
 {
 	// get the current time in seconds since 1970
 	var currTs = Math.floor((new Date().getTime()) / 1000);
@@ -156,19 +161,19 @@ function cmplCORSComplianceCB(error, collname, id, urlStr, statusCode, headers, 
 			});
 	}
 
-	if (--gCheckCount == 0) {
+	if (urlArray.length == 0) {
+		//console.log(cbContext);
 		updateBatchListCb(cbContext._newBatch, cbContext._activeBatch);
-		clearBusy();
 	}
+
+	processSingleUrl(urlArray, collname, cbContext);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // cmplCheckCORSCompliance
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-function cmplCheckCORSCompliance(collname, id, urlStr, cb, cbContext)
+function cmplCheckCORSCompliance(urlArray, collname, id, urlStr, cb, cbContext)
 {
-	gCheckCount++;
-
 	var myUrl = url.parse(urlStr);
 	//console.log(myUrl);
 	var isSecure = (myUrl.protocol == 'https:');
@@ -203,25 +208,35 @@ function cmplCheckCORSCompliance(collname, id, urlStr, cb, cbContext)
     var req = protoObj.request(options, function(res) {
         // support multi-byte chars
         res.setEncoding('utf8');
- 
+
         // continue appending to complete the response body
         var body = '';
         res.on('data', function(d) {
             body += d;
         });
- 
+
         // do whatever we want with the response once it's done
         res.on('end', function() {
             // pass the relevant data back to the callback
 			if (cb && typeof cb === 'function') {
-		        cb(null, collname, id, urlStr, res.statusCode, res.headers, body, cbContext);
+		        cb(null, urlArray, collname, id, urlStr, res.statusCode, res.headers, body, cbContext);
 			}
         });
     }).on('error', function(err) {
 		if (cb && typeof cb === 'function') {
-	        cb(err, collname, id, urlStr);
+	        cb(err, urlArray, collname, id, urlStr, 0, [], '', cbContext);
 		}
     });
+
+	req.on('socket', function (socket) {
+		socket.setTimeout(HTTP_REQ_TIMEOUT * 1000);  
+		socket.on('timeout', function() {
+		    req.abort();
+			console.log('Timed out... Aborted check for [%s]', urlStr);
+		});
+	});
+
+	gCurrentReq = req;
 
 	req.end();
 }
@@ -229,7 +244,7 @@ function cmplCheckCORSCompliance(collname, id, urlStr, cb, cbContext)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // cmplJSONPComplianceCB - callback function for JSONP check result
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-function cmplJSONPComplianceCB(error, collname, id, urlStr, statusCode, headers, result, cbContext)
+function cmplJSONPComplianceCB(error, urlArray, collname, id, urlStr, statusCode, headers, result, cbContext)
 {
 	// get the current time in seconds since 1970
 	var currTs = Math.floor((new Date().getTime()) / 1000);
@@ -301,19 +316,18 @@ function cmplJSONPComplianceCB(error, collname, id, urlStr, statusCode, headers,
 			});
 	}
 
-	if (--gCheckCount == 0) {
+	if (urlArray.length == 0) {
 		updateBatchListCb(cbContext._newBatch, cbContext._activeBatch);
-		clearBusy();
 	}
+
+	processSingleUrl(urlArray, collname, cbContext);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // cmplCheckJSONPCompliance
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-function cmplCheckJSONPCompliance(collname, id, urlStr, cb, cbContext)
+function cmplCheckJSONPCompliance(urlArray, collname, id, urlStr, cb, cbContext)
 {
-	gCheckCount++;
-
 	var myUrl = url.parse(urlStr);
 	//console.log(myUrl);
 	var isSecure = (myUrl.protocol == 'https:');
@@ -364,14 +378,24 @@ function cmplCheckJSONPCompliance(collname, id, urlStr, cb, cbContext)
         res.on('end', function() {
             // pass the relevant data back to the callback
 			if (cb && typeof cb === 'function') {
-		        cb(null, collname, id, urlStr, res.statusCode, res.headers, body, cbContext);
+		        cb(null, urlArray, collname, id, urlStr, res.statusCode, res.headers, body, cbContext);
 			}
         });
     }).on('error', function(err) {
 		if (cb && typeof cb === 'function') {
-	        cb(err, collname, id, urlStr);
+	        cb(err, urlArray, collname, id, urlStr, 0, [], '', cbContext);
 		}
     });
+
+	req.on('socket', function (socket) {
+		socket.setTimeout(HTTP_REQ_TIMEOUT * 1000);  
+		socket.on('timeout', function() {
+		    req.abort();
+			console.log('Timed out... Aborted check for [%s]', urlStr);
+		});
+	});
+
+	gCurrentReq = req;
 
 	req.end();
 }
@@ -379,7 +403,7 @@ function cmplCheckJSONPCompliance(collname, id, urlStr, cb, cbContext)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // cmplIMGComplianceCB - callback function for IMG check result
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-function cmplIMGComplianceCB(error, collname, id, urlStr, statusCode, headers, result, cbContext)
+function cmplIMGComplianceCB(error, urlArray, collname, id, urlStr, statusCode, headers, result, cbContext)
 {
 	// get the current time in seconds since 1970
 	var currTs = Math.floor((new Date().getTime()) / 1000);
@@ -446,19 +470,18 @@ function cmplIMGComplianceCB(error, collname, id, urlStr, statusCode, headers, r
 			});
 	}
 
-	if (--gCheckCount == 0) {
+	if (urlArray.length == 0) {
 		updateBatchListCb(cbContext._newBatch, cbContext._activeBatch);
-		clearBusy();
 	}
+
+	processSingleUrl(urlArray, collname, cbContext);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // cmplCheckIMGCompliance
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-function cmplCheckIMGCompliance(collname, id, urlStr, cb, cbContext)
+function cmplCheckIMGCompliance(urlArray, collname, id, urlStr, cb, cbContext)
 {
-	gCheckCount++;
-
 	var myUrl = url.parse(urlStr);
 	//console.log(myUrl);
 	var isSecure = (myUrl.protocol == 'https:');
@@ -502,14 +525,24 @@ function cmplCheckIMGCompliance(collname, id, urlStr, cb, cbContext)
         res.on('end', function() {
             // pass the relevant data back to the callback
 			if (cb && typeof cb === 'function') {
-		        cb(null, collname, id, urlStr, res.statusCode, res.headers, body, cbContext);
+		        cb(null, urlArray, collname, id, urlStr, res.statusCode, res.headers, body, cbContext);
 			}
         });
     }).on('error', function(err) {
 		if (cb && typeof cb === 'function') {
-	        cb(err, collname, id, urlStr);
+	        cb(err, urlArray, collname, id, urlStr, 0, [], '', cbContext);
 		}
     });
+
+	req.on('socket', function (socket) {
+		socket.setTimeout(HTTP_REQ_TIMEOUT * 1000);  
+		socket.on('timeout', function() {
+		    req.abort();
+			console.log('Timed out... Aborted check for [%s]', urlStr);
+		});
+	});
+
+	gCurrentReq = req;
 
 	req.end();
 }
@@ -547,6 +580,43 @@ function updateBatchListCb(newBatch, activeBatch)
 // processing the batch url list
 //////////////////////////////////////////////////////////////////////////////
 
+function processSingleUrl(urlArray, tblname, cbContext)
+{
+	if (urlArray.length == 0) {
+		console.log('Done processing!!!');
+		clearBusy();
+		return;
+	}
+	else {
+		console.log('URLs to process [%d]', urlArray.length);
+	}
+
+	var urlInst = urlArray.shift();
+
+	switch(urlInst.method) {
+		case CHECK_METHOD_CORS:
+			console.log('url [%s] is using CORS method', urlInst.url);
+			cmplCheckCORSCompliance(urlArray, tblname, urlInst._id.toString(), urlInst.url, cmplCORSComplianceCB, cbContext);
+			break;
+		case CHECK_METHOD_JSONP:
+			console.log('url [%s] is using JSONP method', urlInst.url);
+			cmplCheckJSONPCompliance(urlArray, tblname, urlInst._id.toString(), urlInst.url, cmplJSONPComplianceCB, cbContext);
+			break;
+		case CHECK_METHOD_IMAGE:
+			console.log('url [%s] is using IMAGE method', urlInst.url);
+			cmplCheckIMGCompliance(urlArray, tblname, urlInst._id.toString(), urlInst.url, cmplIMGComplianceCB, cbContext);
+			break;
+		default:
+			console.log('Error: Invalid method [%d] for url [%s]', urlInst.method, urlInst.url);
+			processSingleUrl(urlArray, tblName, cbContext);
+			break;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// processing the batch url list
+//////////////////////////////////////////////////////////////////////////////
+
 function processBatchUrlColl(newBatch, activeBatch)
 {
 	// processing
@@ -556,14 +626,6 @@ function processBatchUrlColl(newBatch, activeBatch)
 	setBusy();
 
 	var batchColl = gMyDatabase.collection(newBatch.tblname);
-
-	/*
-	batchColl.find({}, function(err, result){
-		result.each(function(err, urlInst) {
-			console.log(urlInst);
-		});
-	});
-	*/
 
 	try {
 		var cbContext = {	
@@ -577,28 +639,8 @@ function processBatchUrlColl(newBatch, activeBatch)
 			}
 
 			//console.log(result);
-			for (var k = 0; k < result.length; k++) {
-				var urlInst = result[k];
-
-				switch(urlInst.method) {
-					case CHECK_METHOD_CORS:
-						//console.log('url [%s] is using CORS method', urlInst.url);
-						cmplCheckCORSCompliance(newBatch.tblname, urlInst._id.toString(), urlInst.url, cmplCORSComplianceCB, cbContext);
-						break;
-					case CHECK_METHOD_JSONP:
-						//console.log('url [%s] is using JSONP method', urlInst.url);
-						cmplCheckJSONPCompliance(newBatch.tblname, urlInst._id.toString(), urlInst.url, cmplJSONPComplianceCB, cbContext);
-						break;
-					case CHECK_METHOD_IMAGE:
-						//console.log('url [%s] is using IMAGE method', urlInst.url);
-						cmplCheckIMGCompliance(newBatch.tblname, urlInst._id.toString(), urlInst.url, cmplIMGComplianceCB, cbContext);
-						break;
-					default:
-						console.log('Error: Invalid method [%d] for url [%s]', urlInst.method, urlInst.url);
-						break;
-				}
-			}
-
+			//console.log('Table Name - ' + newBatch.tblname);
+			processSingleUrl(result, newBatch.tblname, cbContext);
 		});
 	}
 	catch(exc) {
@@ -618,8 +660,20 @@ async.forever(
     function(next) {
 		//sleep.sleep(5);
 		if (isBusy()) {
+			if (gLastPendingReq != gCurrentReq) {
+				gLastPendingReq = gCurrentReq;
+			}
+			else {
+				if (gLastPendingReq != null && gCurrentReq == gLastPendingReq) {
+					console.log('Forcefully aborting pending request [%s]', gCurrentReq.url);
+					// send and error event to the hung request
+					gCurrentReq.emit('error');
+				}
+			}
+
 			console.log('Busy processing...');
-			next();
+			// pause for CHECK_INTERVAL seconds
+			setTimeout(next, CHECK_INTERVAL * 1000);
 			return;
 		}
 
