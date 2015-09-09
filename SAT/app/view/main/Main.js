@@ -210,12 +210,12 @@ Ext.define('SAT.view.main.Main', {
                     }
                 },
                 hideHeaders: true,
-                plugins: [{
-                    ptype: 'rowexpander',
-                    pluginId: 'rowexpander',
-                    //headerWidth: 1,
-                    rowBodyTpl : "<div id='rowexpander-row-{id}' class='clsRowExpander' rowid='{id}'></div>"
-                }],
+//                plugins: [{
+//                    ptype: 'rowexpander',
+//                    pluginId: 'rowexpander',
+//                    //headerWidth: 1,
+//                    rowBodyTpl : "<div id='rowexpander-row-{id}' class='clsRowExpander' rowid='{id}'></div>"
+//                }],
                 columns: [
                     {
                         dataIndex: 'active',

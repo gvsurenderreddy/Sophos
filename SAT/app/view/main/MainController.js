@@ -36,10 +36,10 @@ Ext.define('SAT.view.main.MainController', {
 
         if(!checked) {
             column[2].style.setProperty('opacity', '0.5');
-            column[3].style.setProperty('opacity', '0.5');
+//            column[3].style.setProperty('opacity', '0.5');
         } else {
             column[2].style.setProperty('opacity', '1');
-            column[3].style.setProperty('opacity', '1');
+//            column[3].style.setProperty('opacity', '1');
         }
     },
 
@@ -226,7 +226,7 @@ Ext.define('SAT.view.main.MainController', {
             row = Ext.query('.results-grid .x-grid-row')[index],
             store = this.getStores()[index];
 
-        var column = row.querySelectorAll('.x-grid-td')[2],
+        var column = row.querySelectorAll('.x-grid-td')[1],
             cell = column.querySelector('.x-grid-cell-inner');
 
         var chart = Ext.create('SAT.view.main.PolarChart', {
@@ -360,7 +360,7 @@ Ext.define('SAT.view.main.MainController', {
         var html = this.renderGridIcons(icon);
 
         var row = Ext.query('.results-grid .x-grid-row')[index],
-            column = row.querySelectorAll('.x-grid-td')[2],
+            column = row.querySelectorAll('.x-grid-td')[1],
             cell = column.querySelector('.x-grid-cell-inner');
 
         //clean-up/destroy highcharts and related container class
@@ -375,7 +375,7 @@ Ext.define('SAT.view.main.MainController', {
         var me = this,
             row = Ext.query('.results-grid .x-grid-row')[index];
 
-        var column = row.querySelectorAll('.x-grid-td')[2],
+        var column = row.querySelectorAll('.x-grid-td')[1],
             cell = column.querySelector('.x-grid-cell-inner');
             cell.innerHTML = '';
 
@@ -531,9 +531,9 @@ Ext.define('SAT.view.main.MainController', {
     },
 
     executePromise: function(index) {
-            var me = this;
+        var me = this;
 
-            if(me.getArr().indexOf(index) !== -1) {
+        if(me.getArr().indexOf(index) !== -1) {
                 var promise = new Promise(function(resolve, reject) {
                     resolve('Checkbox disabled!!. Will not execute promise');
                 });
@@ -542,7 +542,7 @@ Ext.define('SAT.view.main.MainController', {
 
             // Remove Icon
             var row = Ext.query('.results-grid .x-grid-row')[index],
-                column = row.querySelectorAll('.x-grid-td')[2],
+                column = row.querySelectorAll('.x-grid-td')[1],
 
             cell = column.querySelector('.x-grid-cell-inner');
             cell.innerHTML = '';
@@ -550,44 +550,83 @@ Ext.define('SAT.view.main.MainController', {
             // Render Chart
             var chart = this.renderGridChart(index);
 
-            // Execute Promise
-            var promise = new Promise(function(resolve, reject) {
-                switch(index) {
-                    case 0://speed-test
-                        me.startSpeedTest(index, resolve, reject, chart);
-                        //resolve("Temp-Done"); //localhost
-                        break;
-                    case 1://offensive
-                    case 3://adware
-                    case 4://phishing
-                    case 5://filter-avoidance
-                         me.initAudit(index, chart, resolve, reject);
-                        break;
-                    case 2://malware
-                        me.initAudit(index, chart, resolve, reject);
-                        break;
-                    case 6://ssl
-                        me.initAudit(index, chart, resolve, reject);
-                        break;
-                    default://make fake data, for testing
-                        var timesRun = 0;
-                        var f = setInterval(function(){
-                            timesRun += 20;
-                            if(timesRun === 100){
-                                clearInterval(f);
-                                resolve("Stuff worked!");
-                            }
-                            if(index === 0) {
-                                //me.updateStats(Math.round((Math.random()) * 20), 'upload');
-                                //me.updateStats(Math.round((Math.random()) * 20), 'download');
-                            }
-                            me.updateChart(timesRun, 100-timesRun, index, chart);
-                        }, 1000);
-                        break;
-                }
-            });
+            if(Ext.browser.is.Safari) {
+                var promise = new RSVP.Promise(function(resolve, reject) {
+                    switch(index) {
+                        case 0://speed-test
+                            me.startSpeedTest(index, resolve, reject, chart);
+                            //resolve("Temp-Done"); //localhost
+                            break;
+                        case 1://offensive
+                        case 3://adware
+                        case 4://phishing
+                        case 5://filter-avoidance
+                            me.initAudit(index, chart, resolve, reject);
+                            break;
+                        case 2://malware
+                            me.initAudit(index, chart, resolve, reject);
+                            break;
+                        case 6://ssl
+                            me.initAudit(index, chart, resolve, reject);
+                            break;
+                        default://make fake data, for testing
+                            var timesRun = 0;
+                            var f = setInterval(function(){
+                                timesRun += 20;
+                                if(timesRun === 100){
+                                    clearInterval(f);
+                                    resolve("Stuff worked!");
+                                }
+                                if(index === 0) {
+                                    //me.updateStats(Math.round((Math.random()) * 20), 'upload');
+                                    //me.updateStats(Math.round((Math.random()) * 20), 'download');
+                                }
+                                me.updateChart(timesRun, 100-timesRun, index, chart);
+                            }, 1000);
+                            break;
+                    }
+                });
+                return promise;
+            } else {
+                // Execute Promise
+                var promise = new Promise(function(resolve, reject) {
+                    switch(index) {
+                        case 0://speed-test
+                            me.startSpeedTest(index, resolve, reject, chart);
+                            //resolve("Temp-Done"); //localhost
+                            break;
+                        case 1://offensive
+                        case 3://adware
+                        case 4://phishing
+                        case 5://filter-avoidance
+                            me.initAudit(index, chart, resolve, reject);
+                            break;
+                        case 2://malware
+                            me.initAudit(index, chart, resolve, reject);
+                            break;
+                        case 6://ssl
+                            me.initAudit(index, chart, resolve, reject);
+                            break;
+                        default://make fake data, for testing
+                            var timesRun = 0;
+                            var f = setInterval(function(){
+                                timesRun += 20;
+                                if(timesRun === 100){
+                                    clearInterval(f);
+                                    resolve("Stuff worked!");
+                                }
+                                if(index === 0) {
+                                    //me.updateStats(Math.round((Math.random()) * 20), 'upload');
+                                    //me.updateStats(Math.round((Math.random()) * 20), 'download');
+                                }
+                                me.updateChart(timesRun, 100-timesRun, index, chart);
+                            }, 1000);
+                            break;
+                    }
+                });
 
-            return promise;
+                return promise;
+            }
     },
 
     //-----------------------------------------------------------------------------------------------------------//
