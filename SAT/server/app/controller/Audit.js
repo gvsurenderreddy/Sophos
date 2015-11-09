@@ -15,8 +15,18 @@ var gCheckMethods = [
 	"UNSPEC",
 	"CORS",
 	"JSONP",
-	"IMAGE"
+	"IMG"
 ];
+
+// bitmask for types
+var TYPE_SPEED_TEST			= 0x01;
+var TYPE_OFFENSIVE_CONTENT	= 0x02;
+var TYPE_MALWARE			= 0x04;
+var TYPE_ADWARE_SPYWARE		= 0x08;
+var TYPE_PHISHING			= 0x10;
+var TYPE_ANONYMIZING_SITES	= 0x20;
+var TYPE_SSL_VULNERABILITY	= 0x40;
+var TYPE_ALL				= 0x7F;
 
 var RESULT_SUCCESS = {
 	msg: 'success'
@@ -271,8 +281,63 @@ var Audit = {
 
 					opts = extend(opts, { _id: false });
 
+					var selector2 = {};
+					if (req.query.type && !isNaN(req.query.type)) {
+						// parse hex value
+						var bitFlag = parseInt(req.query.type, 16);
+
+						if (bitFlag & TYPE_SPEED_TEST) {
+							if (!selector2.$or) {
+								selector2.$or = [];
+							}
+							selector2.$or.push({ type: 1 });
+						}
+
+						if (bitFlag & TYPE_OFFENSIVE_CONTENT) {
+							if (!selector2.$or) {
+								selector2.$or = [];
+							}
+							selector2.$or.push({ type: 2 });
+						}
+
+						if (bitFlag & TYPE_MALWARE) {
+							if (!selector2.$or) {
+								selector2.$or = [];
+							}
+							selector2.$or.push({ type: 3 });
+						}
+
+						if (bitFlag & TYPE_ADWARE_SPYWARE) {
+							if (!selector2.$or) {
+								selector2.$or = [];
+							}
+							selector2.$or.push({ type: 4 });
+						}
+
+						if (bitFlag & TYPE_PHISHING) {
+							if (!selector2.$or) {
+								selector2.$or = [];
+							}
+							selector2.$or.push({ type: 5 });
+						}
+
+						if (bitFlag & TYPE_ANONYMIZING_SITES) {
+							if (!selector2.$or) {
+								selector2.$or = [];
+							}
+							selector2.$or.push({ type: 6 });
+						}
+
+						if (bitFlag & TYPE_SSL_VULNERABILITY) {
+							if (!selector2.$or) {
+								selector2.$or = [];
+							}
+							selector2.$or.push({ type: 7 });
+						}
+					}
+
 					myActiveTbl.find(
-						selector,
+						selector2,
 						opts
 					).toArray(function(e, results){
 						if (e) { 

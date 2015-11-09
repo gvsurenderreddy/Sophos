@@ -593,7 +593,7 @@ function processSingleUrl(urlArray, tblname, cbContext)
 
 	var urlInst = urlArray.shift();
 
-	switch(urlInst.method) {
+	switch(urlInst.methodType) {
 		case CHECK_METHOD_CORS:
 			console.log('url [%s] is using CORS method', urlInst.url);
 			cmplCheckCORSCompliance(urlArray, tblname, urlInst._id.toString(), urlInst.url, cmplCORSComplianceCB, cbContext);
@@ -607,7 +607,7 @@ function processSingleUrl(urlArray, tblname, cbContext)
 			cmplCheckIMGCompliance(urlArray, tblname, urlInst._id.toString(), urlInst.url, cmplIMGComplianceCB, cbContext);
 			break;
 		default:
-			console.log('Error: Invalid method [%d] for url [%s]', urlInst.method, urlInst.url);
+			console.log('Error: Invalid method [%d] for url [%s]', urlInst.methodType, urlInst.url);
 			processSingleUrl(urlArray, tblName, cbContext);
 			break;
 	}

@@ -38,7 +38,7 @@ var gCheckMethods = [
 	"UNSPEC",
 	"CORS",
 	"JSONP",
-	"IMAGE"
+	"IMG"
 ];
 
 // init the express object
@@ -487,6 +487,7 @@ function processInputFile(fname, dirname, type, tblName)
 {
 	var inFileName = dirname + fname;
 	var checkMethod = getCheckMethodByType(type);
+	var fileListType = type;
 
 	//console.log('Processing file ' + inFileName + ' to table ' + tblName + ' method ' + gCheckMethods[checkMethod]);
 
@@ -528,7 +529,9 @@ function processInputFile(fname, dirname, type, tblName)
 
 			var newEntry = {
 				url: data,
-				method: checkMethod,
+				type: fileListType,
+				method: gCheckMethods[checkMethod],
+				methodType: checkMethod,
 				compliant: -1
 			};
 
