@@ -1,0 +1,11 @@
+GUI Ajax Call Translation
+
+Audit Type					Current Static JSON Call				New Ajax Call
+=========================================================================================
+Offensive Content			/urlList								/urlActive?type=02
+Malware						/urlMalwareList							/urlActive?type=04
+Adware/Spyware				/urlList								/urlActive?type=08
+Phishing					/urlList								/urlActive?type=10
+Filter Avoidance			/urlList								/urlActive?type=20
+SSL Vulnerability			/urlSSLList								/urlActive?type=40
+
